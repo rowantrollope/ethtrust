@@ -12,7 +12,7 @@
 
 <style scoped>
    .btn {
-        @apply inline-flex justify-center text-sm items-center px-4 py-2 tracking-wide transition-colors duration-200 transform rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2;
+        @apply inline-flex justify-center items-center px-4 py-2 tracking-wide transition-colors duration-200 transform rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2;
     }
     .btn-rounded {
         @apply rounded-3xl;

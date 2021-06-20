@@ -1,208 +1,214 @@
 <template>
-    <PageTitle>
-        <template v-slot:title> Active Trusts </template>
-        <template v-slot:buttons> 
-            <Button class="btn-rounded btn-primary" :onClick="createNew">
-                Create New
-            </Button>            
-        </template>
-    </PageTitle>
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div v-for="trust in trusts" :key="trust.ID" class="card" @click="selectItem(trust)">
 
-            <div class="card-tag">
-                <CashIcon class="card-icon"/>
-            </div>
-
-            <div class="card-body">
-                <a href="#">
-                    <p class="card-header">
-                        {{ trust.name }}
-                    </p>
-                    <p> Trust ID: <b>{{ shortenAddress(trust.ID) }} </b> </p>
-                    <p> Beneficiary: <b>{{ shortenAddress(trust.beneficiary) }} </b> </p>
-                    <p> Value: <b>{{ trust.value }} </b> </p>
-                    <p> Maturity Date: <b>{{ trust.maturity }}</b> </p>
-                </a>
-            </div>
-
-        </div>
+    <!-- 
+        When empty, display some helpful text
+    --> 
+    <div v-if="firstTime">
+        <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+            <span class="block xl:inline">Lets get you started! </span>
+            <span class="block mt-10 text-indigo-600 xl:inline">Click (Create New) to begin... </span>
+        </h1>
     </div>
-    
-    <Modal :show="isModalVisible" :trust="selectedTrust" :create="bCreate" @save="onSave" @cancel="onCancel" @delete="onDelete">
-        <template v-slot:title>{{dialogTitle}}</template>
-    </Modal>
+    <!--
+        This is the primary list
+    -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <TrustCard v-for="trust in trusts" :key="trust.ID" :trust="trust" @click="onSelectItem(trust)"/>
+    </div>
+
+    <!-- 
+        Modals
+    --> 
+    <EditTrust :show="isEditDialogVisible" :trust="selectedTrust" @save="onSave" @cancel="onCancelEdit" @delete="onDelete" @withdraw="onWithdraw" @deposit="onDeposit">
+        <template v-slot:title>Trust Fund: {{ selectedTrust.name }}</template>
+    </EditTrust>
 
 </template>
 
 <script setup="props, {emit}">
 
-import { defineProps, reactive } from 'vue'
+import { defineProps, watch, onMounted } from 'vue'
 import { ref } from 'vue'
-import { CashIcon } from '@heroicons/vue/outline'
 
-import Modal from './Modal.vue';
-import PageTitle from './PageTitle.vue';
-import Button from './Button.vue';
-
-const trusts = ref([
-  {
-    item: 0,
-    ID: '0x5946AfBcaC1749F2ceDF20f344a4EbA82be5b49E',
-    name: 'Paxton Trollope',
-    value: '1 ETH',
-    maturity: '10/10/2030',
-    beneficiary: '0xffffAfBcaC1749F2ceDF20f344a4EbA82be5efee',
-  },
-  {
-    item: 1,
-    ID: '0x5946AfBcaC1749F2ceDF20f344a4EbA82be5b49E',
-    name: 'Paxton Trollope',
-    value: '1 ETH',
-    maturity: '10/10/2030',
-    beneficiary: '0x5467AfBcaC1749F2ceDF20f344a4EbA82be51234',
-  },
-  {
-    item: 2,
-    ID: '0x5946AfBcaC1749F2ceDF20f344a4EbA82be5b49E',
-    name: 'Paxton Trollope',
-    value: '1 ETH',
-    maturity: '10/10/2030',
-    beneficiary: '0x9876AfBcaC1749F2ceDF20f344a4EbA82be5e342',
-  },
-  {
-    item: 3,
-    ID: '0x5946AfBcaC1749F2ceDF20f344a4EbA82be5b49E',
-    name: 'Paxton Trollope',
-    value: '1 ETH',
-    maturity: '10/10/2030',
-    beneficiary: '0xaa34AfBcaC1749F2ceDF20f344a4EbA82be5a34e',
-  },
-  // More people...
-]);
+import store from '../store';
+import EditTrust from './EditTrust';
+import TrustCard from './TrustCard';
+import { toWei,  } from '../helpers'
 
 const props = defineProps({
-  msg: String,
-})
+    reload: Boolean,
+});
 
-const isModalVisible = ref(false);
+const trusts = ref([]);
+
+let tmoConn;
+
+const changed = watch(() => store.state.mainAccount,
+  (account, prevAccount) => {
+    console.log("MainAccountChanges()");
+    loadTrusts();
+  }
+)
+
+const connected = watch(() => store.state.isConnected,
+  (connected, prevConnected) => {
+    console.log("CONNECTED!", connected, prevConnected);
+    loadTrusts();
+  }
+)
+
+const reload = watch(() => props.reload, 
+    (reload, prevReload) => {
+        console.log("Reload()");
+        props.reload = false;
+        loadTrusts();
+    }
+)
+
+//
+// Edit handlers
+//
+const isEditDialogVisible = ref(false);
 const selectedTrust = ref([]);
+const firstTime = ref(false);
+
 let trustBeforeEdit;
-const dialogTitle = ref('Dialog Title');
 
-const bCreate = ref(false);
-
-const openTrustDialog = (trust, createNew) => { 
-    
-    bCreate.value = createNew; 
-
-    selectedTrust.value = trust; 
-
-    if(bCreate.value)
-        dialogTitle.value = "Create New Trust";
-    else   
-        dialogTitle.value = "Edit Trust";
-
-    isModalVisible.value = true; 
-};
-
-const shortenAddress = (str) => { return str.substr(0, 6) + '\u2026' + str.substr(str.length-4, 4); };
-
-const closeTrustDialog = () => { isModalVisible.value = false; };
-
-const onSave = () => { 
-    if(bCreate.value) {
-        trusts.value.push(selectedTrust.value);
-        bCreate.value = false;
-    }
-
-    closeTrustDialog(); 
-};
-const onDelete = () => { 
-    console.log("Selected Trust to delete", selectedTrust.value);
-
-    //delete trusts[selectedTrust.value.item];
-    trusts.value = arrayRemove(trusts, selectedTrust.value);
-    console.log(trusts);
-    closeTrustDialog(); 
-};
-function arrayRemove(arr, value) { 
-    console.log("Array remove", arr, value)
-        return arr.value.filter(function(ele){ 
-            return ele != value; 
-        });
-    }
-const onCancel = () => { 
-    Object.assign(selectedTrust.value, trustBeforeEdit); 
-    closeTrustDialog(); 
-};
-
-const selectItem = (trust) => { 
-
+const onSelectItem = (trust) => { 
     trustBeforeEdit = Object.assign({}, trust); 
-    openTrustDialog(trust, false);
-
-};
-
-const createNew = () => { 
-    let t = { 
-        ID: '0x0',
-        name: '',
-        value: 1,
-        maturity: '10/10/2030',
-        beneficiary: '',
-    };
-
-    openTrustDialog(t, true);    
-    
-};
-
-const state = reactive({ count: 0 })
-
-const init = async () => {
-//  console.log("LinkCards Props: ", props.msg);
+    openEditDialog(trustBeforeEdit);
 }
 
+const openEditDialog = (trust) => {  
+    selectedTrust.value = trust; 
+    isEditDialogVisible.value = true; 
+};
+const closeEditDialog = () => { isEditDialogVisible.value = false; };
 
-init()
+const onSave = async () => { 
+    closeEditDialog(); 
+
+    await updateTrust(selectedTrust.value);
+    await loadTrusts();
+}
+const onDelete = () => { 
+    console.log("Selected Trust to delete", selectedTrust.value);
+    deleteTrust(selectedTrust.value);
+    closeEditDialog(); 
+}
+
+const onWithdraw = (amount) => {
+    console.log("Request to withdraw", selectedTrust.value);
+    
+    withdraw(selectedTrust.value, amount);
+    closeEditDialog();
+}
+
+const onDeposit = (amount) => {
+
+    deposit(selectedTrust.value, amount);
+    closeEditDialog();
+    
+}  
+const deposit = async (trust, _amount) => {
+    // setup the values
+    const account = store.state.mainAccount;
+    const key = trust.key;
+    const amount = toWei(_amount);
+
+    console.log(`deposit() ${trust.key}: ${amount}, Account: ${store.state.mainAccount}`);
+   
+    await store.state.trustSvc.trustContract.methods.depositTrust(key)
+        .send( {value: amount.toString(), from: account });
+    
+    await loadTrusts();
+}
+const withdraw = async (trust, _amount) => {
+    // setup the values
+    const account = store.state.mainAccount;
+    const key = trust.key;
+    const amount = toWei(_amount);
+
+    console.log(`withdraw() ${trust.key}: ${amount}, Account: ${store.state.mainAccount}`);
+   
+    await store.state.trustSvc.trustContract.methods.withdraw(key, amount)
+        .send( { from: account });
+    
+    await loadTrusts();
+}
+const onCancelEdit = () => { 
+    Object.assign(selectedTrust.value, trustBeforeEdit); 
+    closeEditDialog(); 
+};
+
+const updateTrust = async (trust) => {
+    
+    // setup the values
+    const account = store.state.mainAccount;
+    const date = trust.maturityDate;
+    const beneficiary = trust.beneficiary;
+    const name = trust.name;
+
+    console.log(`UpdateTrust ${trust.key}: Name: ${name}, Date: ${date}, Beneficiary: ${beneficiary}, Account: ${store.state.mainAccount}`);
+    
+    await store.state.trustSvc.trustContract.methods.updateTrust(trust.key, beneficiary, name, date)
+        .send( { from: account });
+
+}
+
+const deleteTrust = async (trust) => {
+    console.log("Delete Trust " + trust.key);
+    await store.state.trustSvc.trustContract.methods.withdrawAll(trust.key).send( { from: store.state.mainAccount } );
+    await store.state.trustSvc.trustContract.methods.deleteTrust(trust.key).send( { from: store.state.mainAccount } );
+    await loadTrusts();
+}
+
+/*
+
+LOAD TRUSTS 
+
+*/
+const loadTrusts = async() => {
+
+    if(!store.state.isConnected)
+        return;
+    
+    trusts.value = await _loadTrusts((trust) => { 
+        return trust.creator.toLowerCase() === store.state.mainAccount.toLowerCase(); } ); 
+    
+    firstTime.value = trusts.value.length === 0;
+}
+
+const _loadTrusts = async (callback) => {
+
+    let trusts = [];
+
+    const trustCount = await store.state.trustSvc.trustContract.methods.getTrustCount().call();
+
+    // Load trusts
+    for (var i = 0; i <= trustCount - 1; i++) {
+        const key = await store.state.trustSvc.trustContract.methods.getTrustAtIndex(i).call();
+        const trust = await store.state.trustSvc.trustContract.methods.getTrust(key).call(); 
+        if(callback(trust))
+            trusts = [...trusts, trust];
+    }
+    return trusts;
+}
+
+const mounted = onMounted(() => {
+    loadTrusts();
+    return;
+
+    /*
+    // Old method using timer, now using watch on isConnected()
+    tmoConn = setInterval(() => {
+        loadTrusts();
+    }, 250);
+    console.log("onMounted()");
+    */
+})
 
 </script>
 
 <style scoped>
-    .card {
-        @apply relative 
-        py-0 
-        flex 
-        space-x-3 
-        items-center 
-        rounded-2xl
-        shadow-sm 
-        border 
-        border-gray-300 
-        bg-white 
-        hover:border-gray-800 
-        focus-within:ring-2 
-        focus-within:ring-offset-4 
-        focus-within:ring-black 
-    }
-    .card-tag {
-        @apply flex-shrink-0 
-            flex 
-            items-center 
-            bg-gray-100 
-            text-white 
-            justify-center 
-            w-20 
-            h-full 
-            rounded-l-2xl;
-    }
-    .card-icon {
-        @apply inline text-gray-400 h-10 w-10;
-    }
-    .card-header {
-        @apply text-lg mb-2 font-light text-black;
-    }
-    .card-body {
-        @apply text-black text-sm flex-1 min-w-0 mt-2 mb-2
-    }
 </style>

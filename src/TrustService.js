@@ -1,5 +1,6 @@
 
 import Web3 from 'web3';
+import ref from 'vue';
 import detectEthereumProvider from "@metamask/detect-provider";
 import Trusts from "../build/contracts/Trusts.json";
 import store from "./store";
@@ -20,15 +21,8 @@ class TrustService {
             }
         }
     }
+
     constructor() {
-        /*this.trustContract = null;
-        this.isConnected = false;
-        this.connectionError = false;
-        this.connectionErrorMessage = "";
-        this.networkId = 0;
-        this.chainId = 0;
-        this.mainAccount = null;
-        this.balance = 0;*/
     }
 
     async init() {
@@ -36,6 +30,7 @@ class TrustService {
         const provider = await detectEthereumProvider();
 
         if(provider) {
+
             console.log("TrustService.init()");
             // provider === window.ethereum
             window.web3 = new Web3(window.ethereum);
@@ -59,16 +54,48 @@ class TrustService {
 
             this.isConnected = true;
 
-        } else {
-            console.error("Please Install MetaMask!", error);
+            if(true) {
+                let currentAccount = null;
+                /*provider
+                .request({ method: 'eth_accounts' })
+                .then(handleAccountsChanged)
+                .catch((err) => {
+                    // Some unexpected error.
+                    // For backwards compatibility reasons, if no accounts are available,
+                    // eth_accounts will return an empty array.
+                    console.error(err);
+                });*/
 
-            this.connectionErrorMessage = error;
-            this.connectionError = true;
-            this.isConnected = false;
+                // Note that this event is emitted on page load.
+                // If the array of accounts is non-empty, you're already
+                // connected.
+                provider.on('accountsChanged', this.handleAccountsChanged);
+
+            } else {
+                console.error("Please Install MetaMask!", error);
+
+                this.connectionErrorMessage = error;
+                this.connectionError = true;
+                this.isConnected = false;
+            }
         }
     }
 
+    // For now, 'eth_accounts' will continue to always return an array
+    handleAccountsChanged(accounts) {
+        if (accounts.length === 0) {
+            // MetaMask is locked or the user has not connected any accounts
+            console.log('Please connect to MetaMask.');
+        } else if (accounts[0] !== this.mainAccount) {
+            console.log("handleAccountsChanged()", accounts[0])
+            store.state.mainAccount = accounts[0];
+            this.mainAccount = accounts[0];
+            // Do any other work!
+        }            
+    }
+
     getEthBalance(_length) { 
+
         let bal = window.web3.utils.fromWei(this.balance, 'Ether');
         
         if(_length)

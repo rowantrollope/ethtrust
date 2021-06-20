@@ -24,6 +24,7 @@ contract Trusts {
     
     event LogCreateTrust(address sender, bytes32 key, string name);
     event LogUpdateTrust(address sender, bytes32 key, string name);    
+    event LogDepositTrust(address sender, bytes32 key, uint etherAmount);    
     event LogRemoveTrust(address sender, bytes32 key);
 
     /**
@@ -69,6 +70,17 @@ contract Trusts {
         t.maturityDate = _maturityDate;
 
         emit LogUpdateTrust(msg.sender, t.key, t.name);
+    }
+    
+    function depositTrust(bytes32 key) public payable {
+        
+        require(trustSet.exists(key), "Can't update a trust that doesn't exist.");
+        
+        Trust storage t = trusts[key];
+
+        t.etherAmount += msg.value;
+
+        //emit LogDepositTrust(msg.sender, key, msg.value);
     }
     
     function deleteTrust(bytes32 key) public {
@@ -134,8 +146,8 @@ contract Trusts {
         Trust storage t = trusts[key];
 
         require(msg.sender == t.creator || msg.sender == t.beneficiary, "Only Creator and Owner can withdraw");
-        
-        require(_etherAmount >= t.etherAmount, "Can't withdraw more ether than exists in trust");
+        //TODO: Check that date allows
+        require(_etherAmount <= t.etherAmount, "Can't withdraw more ether than exists in trust");
 
         msg.sender.transfer(_etherAmount);
         
