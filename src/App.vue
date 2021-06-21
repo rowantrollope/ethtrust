@@ -15,14 +15,11 @@
         store.state.trustSvc = ts;
 
         ts.init().then(() => {
-            console.log("ts.Init() returned", ts)
-            
             // Make these variables reactive...
             store.state.isConnected = ts.isConnected;
             store.state.connectionError = ts.connectionError;
             store.state.balance = ts.balance;
             store.state.mainAccount = ts.mainAccount;
-            store.state.counter++;
         });
     }
     init();

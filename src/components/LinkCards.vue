@@ -198,14 +198,6 @@ const _loadTrusts = async (callback) => {
 const mounted = onMounted(() => {
     loadTrusts();
     return;
-
-    /*
-    // Old method using timer, now using watch on isConnected()
-    tmoConn = setInterval(() => {
-        loadTrusts();
-    }, 250);
-    console.log("onMounted()");
-    */
 })
 
 </script>

@@ -24,28 +24,33 @@
                             <form action="#" method="POST">
                                 <div class="rounded-md px-4 py-5 bg-white sm:p-6">
                                     <div class="grid grid-cols-12 gap-6">
-                                        <div class="col-span-9">
+                                        <div class="fieldblock ">
                                             <label for="trust_name" class="label-text">Trust name</label>
                                             <input type="text" 
                                                 v-model="trust.name" 
+                                                placeholder="Enter Trust name"
                                                 name="trust_name" 
                                                 id="trust_name" 
                                                 autocomplete="trust-name" 
                                                 class="input-field" />
                                         </div>
-
-                                        <div class="col-span-3">
+<!--
+                                        <div class="col-span-12">
                                             <label for="eth_amount" class="label-text">ETH Amount</label>
                                             <input type="text" v-model="trust.etherAmount" name="eth_amount" id="eth_amount" autocomplete="eth_amount" class="input-field" />
                                         </div>
-
-                                        <div class="col-span-12">
-                                            <label for="beneficiary_account" class="label-text">Beneficiary Account #</label>
-                                            <input type="text" v-model="trust.beneficiary" name="beneficiary_account" id="beneficiary_account" autocomplete="beneficiary_account" class="input-field" />
+-->
+                                        <div class="fieldblock">
+                                            <label for="beneficiary_account" class="label-text">Beneficiary Account</label>
+                                            <input type="text" 
+                                                    placeholder="Enter account number for beneficiary"
+                                                    v-model="trust.beneficiary" 
+                                                    name="beneficiary_account" 
+                                                    id="beneficiary_account" 
+                                                    autocomplete="beneficiary_account" 
+                                                    class="input-field" />
                                         </div>
-
-
-                                        <div class="col-span-12">
+                                        <div class="fieldblock">
 <!--
                                             <input type="text" v-model="trust.maturityDate" name="maturity_date" id="maturity_date" autocomplete="maturity_date" class="input-field" />
 -->
@@ -61,6 +66,13 @@
                                             </DatePicker>
 
                                         </div>
+
+                                        <div class="fieldblock">
+                                            <EthInput :balance="store.state.trustSvc.getEthBalance(5)" v-model="trust.etherAmount">
+                                                Deposit Amount:
+                                            </EthInput>
+                                        </div>
+
                                     </div>
                                 </div>
                             </form>
@@ -88,7 +100,9 @@ import { XIcon, ExclamationIcon } from '@heroicons/vue/outline'
 import { Calendar, DatePicker } from 'v-calendar';
 import { toEther, toDate } from '../helpers'
 
+import store from '../store';
 import Button from './Button.vue';
+import EthInput from './EthInput.vue';
 
 const props = defineProps({
     trust: Object,
@@ -141,9 +155,13 @@ const updated = onUpdated(() => {
     @apply flex mt-4 px-4 py-3 text-right sm:px-6;
 }
 .input-field {
-    @apply  text-lg p-2 block border focus:ring-indigo-500 focus:border-indigo-500 w-full min-w-0 rounded-md border-gray-300;
+    @apply md:flex-1 text-lg p-2 block border focus:ring-indigo-500 focus:border-indigo-500 w-full min-w-0 rounded-md border-gray-300;
 }
 .label-text {
-    @apply block text-left text-lg font-medium text-gray-700;
+    @apply flex md:inline-flex block text-left text-lg font-medium text-gray-700;
+}
+
+.fieldblock {
+    @apply sm:flex items-center space-x-3 col-span-12;
 }
 </style> 

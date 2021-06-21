@@ -4,6 +4,7 @@ import ref from 'vue';
 import detectEthereumProvider from "@metamask/detect-provider";
 import Trusts from "../build/contracts/Trusts.json";
 import store from "./store";
+import { round, toEther } from "./helpers";
 
 class TrustService {
 
@@ -18,27 +19,39 @@ class TrustService {
             chainId: 0,
             mainAccount: "",
             balance: 0,
+            exchange: {},
+            provider: {},
             }
         }
     }
 
     constructor() {
     }
+    async disconnect() {
+        console.log("TrustService.disconnect()");
+        
+        if(this.provider.close) {
+            await this.provider.close();
+        }
+    }
+    async connect() {
+        console.log("TrustService.connect()");
 
-    async init() {
+        this.provider = await detectEthereumProvider();
 
-        const provider = await detectEthereumProvider();
+        // If the provider returned by detectEthereumProvider is not the same as
+        // window.ethereum, something is overwriting it, perhaps another wallet.
+        if (this.provider !== window.ethereum) {
+            console.error('Do you have multiple wallets installed?');
+        }
 
-        if(provider) {
-
-            console.log("TrustService.init()");
-            // provider === window.ethereum
+        if(this.provider) {
             window.web3 = new Web3(window.ethereum);
-            
-            await provider.request({method: 'eth_requestAccounts'});
-            
-            this.chainId = await provider.request({ method: 'eth_chainId'});
-            const account = await provider.request({ method: 'eth_accounts'});
+
+            await this.provider.request({method: 'eth_requestAccounts'});
+                
+            this.chainId = await this.provider.request({ method: 'eth_chainId'});
+            const account = await this.provider.request({ method: 'eth_accounts'});
 
             // Store the connection data, balance, etc
             this.mainAccount = account[0];
@@ -56,20 +69,7 @@ class TrustService {
 
             if(true) {
                 let currentAccount = null;
-                /*provider
-                .request({ method: 'eth_accounts' })
-                .then(handleAccountsChanged)
-                .catch((err) => {
-                    // Some unexpected error.
-                    // For backwards compatibility reasons, if no accounts are available,
-                    // eth_accounts will return an empty array.
-                    console.error(err);
-                });*/
-
-                // Note that this event is emitted on page load.
-                // If the array of accounts is non-empty, you're already
-                // connected.
-                provider.on('accountsChanged', this.handleAccountsChanged);
+                this.provider.on('accountsChanged', this.handleAccountsChanged);
 
             } else {
                 console.error("Please Install MetaMask!", error);
@@ -79,6 +79,16 @@ class TrustService {
                 this.isConnected = false;
             }
         }
+    }
+    async init() {
+
+        console.log("TrustService.init()");
+
+        // LOAD ETH-USD 
+        const response = await fetch("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,BTC,EUR");
+        const data = await response.json();
+        this.exchange = data;    
+
     }
 
     // For now, 'eth_accounts' will continue to always return an array
@@ -93,13 +103,15 @@ class TrustService {
             // Do any other work!
         }            
     }
-
+    ETH2USD(eth) {
+        return this.exchange.USD * toEther(eth);
+    }
     getEthBalance(_length) { 
 
         let bal = window.web3.utils.fromWei(this.balance, 'Ether');
         
         if(_length)
-            return bal.substring(0, _length);
+            return round(bal);
         else 
             return bal
     
@@ -107,6 +119,7 @@ class TrustService {
     async refreshBalance() {
         this.balance = await window.web3.eth.getBalance(this.mainAccount);
     }
+        
 }
 
 export default TrustService;

@@ -19,9 +19,9 @@
                 <StatusOnlineIcon class="status-icon-warning" aria-hidden="true" />
                 <span class="status-text">Error... </span>
             </MenuButton>
-            <MenuButton v-else-if="!store.state.isConnected" class="menu-button-warning" @click="onClicked()">
-                <StatusOnlineIcon class="status-icon-warning" aria-hidden="true" />
-                <span class="status-text">Connecting... </span>
+            <MenuButton v-else-if="!store.state.isConnected" class="menu-button-connect" @click="onClicked()">
+                <StatusOnlineIcon class="status-icon-connect" aria-hidden="true" />
+                <span class="status-text-connect">Connect </span>
             </MenuButton>
 
         </div>
@@ -29,7 +29,7 @@
             <MenuItems v-if="store.state.isConnected" class="menu-items">
                 <div class="flex-col vertical space-y-5">
                 <p class="flex text-xl border text-green-500 border-green-500 p-2 rounded-md ">
-                    Connected to Blockchain
+                    Successfully connected to the Blockchain
                 </p>
                 <p class="flex inline-block">
                     Account: &nbsp; <b> {{ store.state.mainAccount }} </b>
@@ -37,6 +37,9 @@
                 <p class="flex">
                     Balance: &nbsp; <b> {{ store.state.trustSvc.getEthBalance(5) }} ETH </b>
                 </p>
+                <div class="text-right">
+                <Button class="btn btn-danger" @click="onDisconnect()">Disconnect from Blockchain</Button>
+                </div>
                 </div>
             </MenuItems>
         </transition>
@@ -52,22 +55,35 @@ import { StatusOnlineIcon, MenuIcon } from '@heroicons/vue/outline'
 import Button from './Button.vue';
 import store from '../store';
 
-const props = defineProps({
-})
-
-const init = async () => { 
+const onDisconnect = () => {
+    console.log("onDisconnect()");
+    let ts = store.state.trustSvc;
+    if(ts.isConnected)
+    {
+        ts.disconnect().then(() => {
+            store.state.isConnected = ts.isConnected;
+            store.state.connectionError = ts.connectionError;
+            store.state.balance = ts.balance;
+            store.state.mainAccount = ts.mainAccount;
+        })
+    }
 }
-const mounted = onMounted(() => { console.log("onMounted());") } );
-const activated = onActivated(() => { console.log("onActivated());") } );
-const updated = onUpdated(() => { console.log("onUpdated());") } );
-
 const onClicked = () => {
     console.log("onClicked()");
-    store.state.trustSvc.refreshBalance();
-}
-const shortenAddress = (str) => { return str.substr(0, 6) + '\u2026' + str.substr(str.length-4, 4); };
+    let ts = store.state.trustSvc;
 
-init();
+    if(!ts.isConnected) {
+        ts.connect().then(() => {
+            // Make these variables reactive...
+            store.state.isConnected = ts.isConnected;
+            store.state.connectionError = ts.connectionError;
+            store.state.balance = ts.balance;
+            store.state.mainAccount = ts.mainAccount;
+        });
+    }
+
+    //store.state.trustSvc.refreshBalance();
+}
 
 </script>
 
@@ -78,8 +94,8 @@ init();
     .menu-button {
         @apply bg-white px-2 inline-block items-center flex text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white;
     }
-    .menu-button-warning {
-        @apply bg-yellow-400 px-2 inline-block items-center flex text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white;
+    .menu-button-connect {
+        @apply bg-blue-500 px-2 inline-block items-center flex rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white;
     }
     .menu-items {
         @apply origin-top-right absolute w-max px-5 pt-5 pb-5 right-0 mt-2 rounded-2xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50;
@@ -90,10 +106,13 @@ init();
     .status-icon {
         @apply text-green-400 h-8 w-8;
     }
-    .status-icon-warning {
-        @apply text-red-400 h-8 w-8;
+    .status-icon-connect {
+        @apply text-white h-8 w-8;
+    }
+    .status-text-connect {
+        @apply text-white text-lg ml-1 mr-2 ;
     }
     .status-text {
-        @apply text-black ml-1 mr-2 font-light;
+        @apply text-black ml-1 mr-2 ;
     }
 </style>

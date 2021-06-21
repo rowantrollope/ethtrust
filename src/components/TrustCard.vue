@@ -12,7 +12,7 @@
                     {{ trust.name }}
                 </p>
                 <span class="-ml-2 text-green-500 text-lg flex items-center"> <svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" preserveAspectRatio="xMidYMid" viewBox="-38.39985 -104.22675 332.7987 625.3605"><path fill="#343434" d="M125.166 285.168l2.795 2.79 127.962-75.638L127.961 0l-2.795 9.5z"/><path fill="#8C8C8C" d="M127.962 287.959V0L0 212.32z"/><path fill="#3C3C3B" d="M126.386 412.306l1.575 4.6L256 236.587l-128.038 75.6-1.575 1.92z"/><path fill="#8C8C8C" d="M0 236.585l127.962 180.32v-104.72z"/><path fill="#141414" d="M127.961 154.159v133.799l127.96-75.637z"/><path fill="#393939" d="M127.96 154.159L0 212.32l127.96 75.637z"/></svg>
-                {{ toEther(props.trust.etherAmount) }} ETH </span>
+                {{ toEther(props.trust.etherAmount) }} ETH - ${{ eth2usd }} USD</span>
                 <p class="text-lg"> Matures on {{ toDate(props.trust.maturityDate) }}<br/><br/> </p>
                 <p> Trust ID: <b>{{ shortenAddress(props.trust.key) }} </b> </p>
                 <p> Beneficiary: <b>{{ shortenAddress(props.trust.beneficiary) }} </b> </p>
@@ -25,16 +25,17 @@
 
 <script setup="props, {emit}">
 
-import { defineProps } from 'vue'
+import { defineProps, computed } from 'vue'
 import { ref } from 'vue'
 import { ChevronRightIcon } from '@heroicons/vue/outline'
 import store from '../store';
-import { shortenAddress, toDate, toEther } from '../helpers'
+import { round, shortenAddress, toDate, toEther } from '../helpers'
 
 const props = defineProps({
     trust: Object,
 });
 const emit = defineEmit(['onclick']);
+const eth2usd = computed(() => round(store.state.trustSvc.ETH2USD(props.trust.etherAmount)));
 
 </script>
 
@@ -60,9 +61,9 @@ const emit = defineEmit(['onclick']);
             flex 
             items-center 
             bg-gradient-to-b
-            from-pink-500
-            via-red-500
-            to-red-500
+            from-black
+            via-black
+            to-gray-700
             text-white 
             justify-center 
             w-20 
@@ -74,9 +75,9 @@ const emit = defineEmit(['onclick']);
             flex 
             items-center 
             bg-gradient-to-b
-            from-blue-500
-            via-green-500
-            to-green-500
+            from-black
+            via-indigo-900
+            to-indigo-900
             text-white 
             justify-center 
             w-20 

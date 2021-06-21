@@ -112,11 +112,9 @@
                                     <span class="text-green-500">{{toEther(trust.etherAmount)}} ETH</span>
                                 </p>
                                 <div class="grid grid-cols-12 mt-4 gap-6 items-center">
-                                    <div class="col-span-3">
-                                        <label for="withdraw_amount" class="label-text">ETH to Withdraw</label>
-                                    </div>
-                                    <div class="col-span-3">
-                                        <input type="text" v-model="ethWithdraw" name="ethWithdraw" id="ethWithdraw" autocomplete="ethWithdraw" class="input-field" />
+                                    <div class="col-span-12">
+<!--                                        <input type="text" v-model="ethWithdraw" name="ethWithdraw" id="ethWithdraw" autocomplete="ethWithdraw" class="input-field" />
+-->                                        <EthInput v-model="ethWithdraw">Enter Amount to withdraw</EthInput>
                                     </div>
                                 </div>
 
@@ -133,16 +131,9 @@
                             <div v-show="activeTab===2" class="tab-content">
                                 <p class="text-2xl">Add funds to trust fund. </p> <br/>
                                 <p><b>Note: Only ETH deposits are supported at this time.</b></p><br/>
-                                <p class="text-xl">Your Wallet Balance: <span class="text-bold text-green-600">{{ toEther(store.state.balance) }} ETH</span></p><br/>
+                                <p class="text-xl">Your Wallet Balance: <span class="text-bold text-green-600">{{ store.state.trustSvc.getEthBalance(5) }} ETH</span></p>
 
-                                <div class="grid grid-cols-12 mt-4 gap-6 items-center">
-                                    <div class="col-span-3">
-                                        <label for="ethDeposit" class="label-text">ETH to Deposit</label>
-                                    </div>
-                                    <div class="col-span-3">
-                                        <input type="text" v-model="ethDeposit" name="ethDeposit" id="ethDeposit" autocomplete="ethDeposit" class="input-field" />
-                                    </div>
-                                </div>
+                                <EthInput class="mt-3" v-model="ethDeposit">Deposit Amount</EthInput>
 
                                 <div class="dialog-footer">
                                     <Button class="flex-1 btn-white mx-2" :onClick="onCancel" >
@@ -189,6 +180,7 @@ import Button from './Button.vue';
 import { Calendar, DatePicker } from 'v-calendar';
 import { shortenAddress, toDate, toEther } from '../helpers'
 import store from '../store';
+import EthInput from './EthInput';
 
 const props = defineProps({
     trust: Object,
