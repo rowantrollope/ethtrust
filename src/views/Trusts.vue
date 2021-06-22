@@ -9,7 +9,7 @@
             </template>
         </PageTitle>
         <div class="px-5">
-            <TrustList @items-loaded="onItemsLoaded"></TrustList>
+            <TrustList :reload="reload" @items-loaded="onItemsLoaded"></TrustList>
         </div>
     </div>
     <!-- 
@@ -49,6 +49,7 @@ import { toWei } from '../helpers'
 
 const selectedTrust = ref([]);
 const displayHelpText = ref(false);
+const reload = ref(false);
 
 const onItemsLoaded = (num) => {
     displayHelpText.value = num === 0;
@@ -82,6 +83,9 @@ const onCreate = async () => {
     closeCreateDialog(); 
     console.log(selectedTrust.value.etherAmount);
     await createTrust(selectedTrust.value);
+    
+    // Tell the TrustList to reload after we create a new trust
+    reload.value = true;
 }
 
 const createTrust = async (trust) => {

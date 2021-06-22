@@ -6,7 +6,7 @@
         <div class="ml-20 text-2xl mt-10 ml-5 tracking-tight font-extrabold text-gray-900">
             <div class="flex items-center space-x-5 mt-10">
                 <span class="block text-indigo-600">Click </span>
-                <Button class="btn-rounded btn-success" @click="onConnect">Connect</Button>
+                <Button class="btn-rounded btn-success" @click="onConnect">Start</Button>
                 <span class="block text-indigo-600">to connect your wallet</span>
             </div>
         </div>

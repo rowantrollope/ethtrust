@@ -3,7 +3,7 @@
     <!--
         This is the primary list
     -->
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <TrustCard v-for="trust in trusts" :key="trust.ID" :trust="trust" @click="onSelectItem(trust)"/>
     </div>
 
@@ -29,6 +29,7 @@ import Button from './Button';
 import { toWei,  } from '../helpers'
 
 const props = defineProps({
+    reload: Boolean,
 });
 
 const emit = defineEmit(['items-loaded']);
@@ -43,21 +44,20 @@ const changed = watch(() => store.state.mainAccount,
   }
 )
 
+const reload = watch(() => props.reload,
+  (val, prevVal) => {
+    if(val)
+        loadTrusts();
+    props.reload = false;
+  }
+)
+
 const connected = watch(() => store.state.isConnected,
   (connected, prevConnected) => {
     if(connected)
         loadTrusts();
   }
 )
-/*
-const reload = watch(() => props.reload, 
-    (reload, prevReload) => {
-        console.log("Reload()");
-        props.reload = false;
-        loadTrusts();
-    }
-)
-*/
 //
 // Edit handlers
 //
@@ -162,27 +162,14 @@ LOAD TRUSTS
 */
 const loadTrusts = async() => {
     
+    trusts.value = [];
+
     trusts.value = await store.state.trustSvc.load((trust) => { 
         return trust.creator.toLowerCase() === store.state.mainAccount.toLowerCase(); } ); 
     
+    console.log(trusts.value.length);
+
     emit('items-loaded', trusts.value.length);
-}
-
-const load = async (callback) => {
-
-    let trusts = [];
-
-    const trustCount = await store.state.trustSvc.trustContract.methods.getTrustCount().call();
-
-    // Load trusts
-    for (var i = 0; i <= trustCount - 1; i++) {
-        const key = await store.state.trustSvc.trustContract.methods.getTrustAtIndex(i).call();
-        const trust = await store.state.trustSvc.trustContract.methods.getTrust(key).call(); 
-        if(callback(trust))
-            trusts = [...trusts, trust];
-    }
-    console.log("Loaded trusts", trusts);
-    return trusts;
 }
 
 const mounted = onMounted(() => {

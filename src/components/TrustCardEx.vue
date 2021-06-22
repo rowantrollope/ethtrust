@@ -1,56 +1,52 @@
 <template>
     <div class="card justify-center">
-        <div class="relative ">
+        <div class="card-inner">
             <img alt="cert" width="400" src="../assets/money.png">
-            <div class="cert-name text-2xl leading-tight">Lyla Trollope</div>            
-            <div class="cert-eth text-3xl text-white font-bold ">500</div>
-            <div class="cert-date">06/20/2030</div>              
-            <div class="cert-creator text-xs">0x3049...3323</div>            
-            <div class="cert-trustee text-xs">0xffff...0001</div>            
+            <div class="cert-name text-2xl leading-tight">{{ trust.name }}</div>            
+            <div class="cert-eth text-3xl text-white font-bold ">{{ toEther(props.trust.etherAmount) }}</div>
+            <div class="cert-date text-xl">Available: {{ toDate(props.trust.maturityDate) }}</div>              
+            <div class="cert-creator text-xs">{{ shortenAddress(props.trust.creator) }}3</div>            
+            <div class="cert-trustee text-xs">{{ shortenAddress(props.trust.key) }} </div>            
         </div>
     </div>
-
 </template>
 
 <script setup="props, {emit}">
 
+import { defineProps, computed } from 'vue'
+import { ref } from 'vue'
 import { ChevronRightIcon } from '@heroicons/vue/outline'
+import store from '../store';
+import { round, shortenAddress, toDate, toEther } from '../helpers'
+
+const props = defineProps({
+    trust: Object,
+});
+const emit = defineEmit(['onclick']);
 
 </script>
 
 <style scoped>
-    .card {
+     .card {
         @apply relative 
         py-0 
         flex 
         items-center 
         text-center
-        border
-        border-gray-300
-        shadow-lg
         bg-white 
+    }
+     .card-inner {
+        @apply relative 
+        flex 
+        border-2
+        border-gray-300
+        py-2
+        px-2
+        shadow-md
         hover:border-black
         focus-within:ring-2 
         focus-within:ring-offset-4 
         focus-within:ring-green-800 
-    }
-    .card-tag {
-        @apply flex-shrink-0 
-            flex 
-            items-center 
-            bg-gradient-to-b
-            from-black
-            via-black
-            to-gray-700
-            text-white 
-            justify-center 
-            w-20 
-            h-full 
-            ml-2
-            rounded-l-2xl;
-    }
-    .eth-amount {
-        @apply -ml-2 text-green-500 text-lg flex items-center;
     }
     .cert-name {
             position: absolute;
@@ -60,7 +56,7 @@ import { ChevronRightIcon } from '@heroicons/vue/outline'
     }
     .cert-eth {
             position: absolute;
-            top: 70%;
+            top: 69%;
             left: 50%;
             transform: translate(-50%, -50%);
     }
@@ -78,7 +74,7 @@ import { ChevronRightIcon } from '@heroicons/vue/outline'
     }
     .cert-date {
             position: absolute;
-            top: 50%;
+            top: 48%;
             left: 50%;
             transform: translate(-50%, -50%);
     }

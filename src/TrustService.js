@@ -27,26 +27,15 @@ class TrustService {
 
     constructor() {
     }
+    // TODO: Implement
     async disconnect() {
         console.log("TrustService.disconnect()");
-        /*
-        if(this.provider.disconnect) {
-            await this.provider.disconnect();
-            this.isConnected = false;
-            this.connectionError = false;
-            this.connectionErrorMessage = "";
-        }*/
     }
+    
+    // Connect to blockchain and contract
     async connect() {
 
         this.provider = await detectEthereumProvider();
-
-        // If the provider returned by detectEthereumProvider is not the same as
-        // window.ethereum, something is overwriting it, perhaps another wallet.
-        if (this.provider !== window.ethereum) {
-            console.error('Do you have multiple wallets installed?');
-        }
-        //console.log("TrustService.connect()", this.provider, window.ethereum);
 
         if(this.provider) {
             //console.log(this.provider);
@@ -108,7 +97,7 @@ class TrustService {
         if(!this.isConnected)
             return;
             
-        let trusts = [];
+        let newtrusts = [];
     
         const trustCount = await this.trustContract.methods.getTrustCount().call();
         console.log("trustCount", trustCount);
@@ -117,10 +106,10 @@ class TrustService {
             const key = await this.trustContract.methods.getTrustAtIndex(i).call();
             const trust = await this.trustContract.methods.getTrust(key).call(); 
             if(callback(trust))
-                trusts = [...trusts, trust];
+                newtrusts = [...newtrusts, trust];
         }
-        console.log("trusts", trusts);
-        return trusts;
+        console.log("trusts", newtrusts);
+        return newtrusts;
     }
     
     // For now, 'eth_accounts' will continue to always return an array

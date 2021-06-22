@@ -3,7 +3,7 @@
         This is the primary list
     -->
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <TrustCard v-for="trust in trusts" :key="trust.ID" :trust="trust" @click="onSelectItem(trust)"/>
+        <TrustCardEx v-for="trust in trusts" :key="trust.ID" :trust="trust" @click="onSelectItem(trust)"/>
     </div>
 
 </template>
@@ -13,7 +13,7 @@
 import { watch, onMounted } from 'vue'
 import { ref } from 'vue'
 import store from '../store';
-import TrustCard from './TrustCard';
+import TrustCardEx from './TrustCardEx';
 
 const emit = defineEmit(['items-loaded']);
 const ts = store.state.trustSvc;

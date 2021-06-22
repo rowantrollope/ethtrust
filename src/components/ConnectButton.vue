@@ -21,7 +21,7 @@
             </MenuButton>
             <MenuButton v-else-if="!store.state.isConnected" class="menu-button-connect" v-on:click.prevent="onClicked()">
                 <StatusOnlineIcon class="status-icon-connect" aria-hidden="true" />
-                <span class="status-text-connect">Connect </span>
+                <span class="status-text-connect">Start</span>
             </MenuButton>
 
         </div>

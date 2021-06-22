@@ -1,10 +1,8 @@
 <template>
     <div v-if="store.state.isConnected">
-        <PageTitle>
-            <template v-slot:title> Trust funds created for you </template>
-            <template v-slot:buttons>           
-            </template>
-        </PageTitle>    
+        <div class="text-6xl border-b font-black leading-tight ml-5 mr-5 mt-1 mb-4">
+            Your trust funds: <br/>
+        </div>
         <div class="px-5">
             <ForYouList @items-loaded="onItemsLoaded"/>
         </div>
