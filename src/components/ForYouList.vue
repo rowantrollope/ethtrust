@@ -1,14 +1,4 @@
 <template>
-
-    <!-- 
-        When empty, display some helpful text
-    --> 
-    <div class=" m-10 mt-10 " v-if="firstTime">
-        <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-            <span class="block xl:inline">There arent any trust funds for you yet. </span>
-            <span class="block mt-10 text-indigo-600 xl:inline">Maybe later...</span>
-        </h1>
-    </div>
     <!--
         This is the primary list
     -->
@@ -18,17 +8,15 @@
 
 </template>
 
-<script setup="props, {emit}">
+<script setup="{emit}">
 
-import { defineProps, watch, onMounted } from 'vue'
+import { watch, onMounted } from 'vue'
 import { ref } from 'vue'
 import store from '../store';
 import TrustCard from './TrustCard';
-import PageTitle from './PageTitle.vue';
 
-const props = defineProps({
-    reload: Boolean,
-});
+const emit = defineEmit(['items-loaded']);
+const ts = store.state.trustSvc;
 
 const trusts = ref([]);
 /*
@@ -41,15 +29,19 @@ const trusts = ref([]);
     toDate(trust.maturityDate
 */
 
-let tmoConn;
-
 const changed = watch(() => store.state.mainAccount,
   (account, prevAccount) => {
-    console.log("MainAccountChanges()");
+    console.log("MainAccountChanged()");
     loadTrusts();
   }
 )
-
+const connected = watch(() => store.state.isConnected,
+  (connected, prevConnected) => {
+    if(connected)
+        loadTrusts();
+  }
+)
+/*
 const reload = watch(() => props.reload, 
     (reload, prevReload) => {
         console.log("Reload()");
@@ -57,6 +49,8 @@ const reload = watch(() => props.reload,
         loadTrusts();
     }
 )
+*/
+
 //
 // Event Handlers
 //
@@ -65,7 +59,6 @@ const reload = watch(() => props.reload,
 // Edit handlers
 //
 const selectedTrust = ref([]);
-const firstTime = ref(false);
 
 let trustBeforeEdit;
 
@@ -97,7 +90,7 @@ const withdraw = async (trust, _amount) => {
 
     console.log(`withdraw() ${trust.key}: ${amount}, Account: ${store.state.mainAccount}`);
    
-    await store.state.trustSvc.trustContract.methods.withdraw(key, amount)
+    await ts.trustContract.methods.withdraw(key, amount)
         .send( { from: account });
     
     await loadTrusts();
@@ -108,37 +101,20 @@ const withdraw = async (trust, _amount) => {
 LOAD TRUSTS 
 
 */
-const loadTrusts = async () => {
+const loadTrusts = async() => {
 
-    if(!store.state.isConnected){
-        console.log("not connected... retry")
-        return;
-    }
-    clearInterval(tmoConn);
-
-    const trustCount = await store.state.trustSvc.trustContract.methods.getTrustCount().call();
-    console.log("Connected! trustCount: ", trustCount);
-    trusts.value = [];
-    //r Load trusts
-    for (var i = 0; i <= trustCount-1; i++) {
-        const key = await store.state.trustSvc.trustContract.methods.getTrustAtIndex(i).call();
-        const trust = await store.state.trustSvc.trustContract.methods.getTrust(key).call(); 
-        
-        if(trust.beneficiary.toLowerCase() === store.state.mainAccount.toLowerCase()) {                    
-            trusts.value = [...trusts.value, trust];
-        }
-    }
-    if(trusts.value.length > 0)
-        firstTime.value = false;
-    else 
-        firstTime.value = true;
+    trusts.value = await ts.load((trust) => { 
+        return trust.beneficiary.toLowerCase() === store.state.mainAccount.toLowerCase(); } ); 
+    
+    emit('items-loaded', trusts.value.length);
 }
 
 const mounted = onMounted(() => {
-    tmoConn = setInterval(() => {
-        loadTrusts();
-    }, 250);   
+    loadTrusts();
+    return;
 })
+
+
 
 </script>
 

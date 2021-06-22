@@ -17,9 +17,9 @@
             </MenuButton>
             <MenuButton v-else-if="store.state.connectionError" class="menu-button-warning" @click="onClicked()">
                 <StatusOnlineIcon class="status-icon-warning" aria-hidden="true" />
-                <span class="status-text">Error... </span>
+                <span class="status-text">Not Connected </span>
             </MenuButton>
-            <MenuButton v-else-if="!store.state.isConnected" class="menu-button-connect" @click="onClicked()">
+            <MenuButton v-else-if="!store.state.isConnected" class="menu-button-connect" v-on:click.prevent="onClicked()">
                 <StatusOnlineIcon class="status-icon-connect" aria-hidden="true" />
                 <span class="status-text-connect">Connect </span>
             </MenuButton>
@@ -28,17 +28,35 @@
         <transition enter-active-class="transition ease-out duration-200" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
             <MenuItems v-if="store.state.isConnected" class="menu-items">
                 <div class="flex-col vertical space-y-5">
-                <p class="flex text-xl border text-green-500 border-green-500 p-2 rounded-md ">
-                    Successfully connected to the Blockchain
+                    <p class="flex text-xl border text-green-500 border-green-500 p-2 rounded-md ">
+                        Successfully connected to the Blockchain
+                    </p>
+                    <p class="flex inline-block">
+                        Account: &nbsp; <b> {{ store.state.mainAccount }} </b>
+                    </p>
+                    <p class="flex">
+                        Balance: &nbsp; <b> {{ store.state.trustSvc.getEthBalance(5) }} ETH </b>
+                    </p>
+                <!--
+                <div class="text-right">
+                <Button class="btn btn-danger" @click="onDisconnect()">Disconnect from Blockchain</Button>
+                </div>
+                -->
+                </div>
+            </MenuItems>
+            <MenuItems v-else-if="store.state.connectionError" class="menu-items">
+                <div class="flex-col vertical space-y-5">
+                <p class="flex text-xl border text-red-500 border-red-500 p-2 rounded-md ">
+                    Failed to connect to the Blockchain
+                </p>
+                <p>
+                    Error Message: {{ store.state.trustSvc.connectionErrorMessage }}
                 </p>
                 <p class="flex inline-block">
                     Account: &nbsp; <b> {{ store.state.mainAccount }} </b>
                 </p>
-                <p class="flex">
-                    Balance: &nbsp; <b> {{ store.state.trustSvc.getEthBalance(5) }} ETH </b>
-                </p>
                 <div class="text-right">
-                <Button class="btn btn-danger" @click="onDisconnect()">Disconnect from Blockchain</Button>
+                <Button class="btn btn-primary" @click="onClicked()">Try Again</Button>
                 </div>
                 </div>
             </MenuItems>
@@ -56,20 +74,18 @@ import Button from './Button.vue';
 import store from '../store';
 
 const onDisconnect = () => {
-    console.log("onDisconnect()");
     let ts = store.state.trustSvc;
     if(ts.isConnected)
     {
         ts.disconnect().then(() => {
-            store.state.isConnected = ts.isConnected;
-            store.state.connectionError = ts.connectionError;
-            store.state.balance = ts.balance;
-            store.state.mainAccount = ts.mainAccount;
+            store.state.isConnected = false;
+            store.state.connectionError = false;
+            store.state.balance = 0;
+            store.state.mainAccount = "";
         })
     }
 }
 const onClicked = () => {
-    console.log("onClicked()");
     let ts = store.state.trustSvc;
 
     if(!ts.isConnected) {
@@ -79,6 +95,9 @@ const onClicked = () => {
             store.state.connectionError = ts.connectionError;
             store.state.balance = ts.balance;
             store.state.mainAccount = ts.mainAccount;
+            
+            //if(ts.connectionError)
+                //window.alert("Error connecting: " + ts.connectionError);
         });
     }
 
@@ -97,11 +116,14 @@ const onClicked = () => {
     .menu-button-connect {
         @apply bg-blue-500 px-2 inline-block items-center flex rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white;
     }
+    .menu-button-warning {
+        @apply bg-red-500 px-2 inline-block items-center flex rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white;
+    }
     .menu-items {
-        @apply origin-top-right absolute w-max px-5 pt-5 pb-5 right-0 mt-2 rounded-2xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50;
+        @apply origin-top-right absolute px-5 pt-5 pb-5 right-0 mt-2 rounded-2xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50;
     }
     .menu-item {
-        @apply block px-4 py-2 text-gray-900;
+        @apply px-4 py-2 text-gray-900;
     }
     .status-icon {
         @apply text-green-400 h-8 w-8;
@@ -109,7 +131,13 @@ const onClicked = () => {
     .status-icon-connect {
         @apply text-white h-8 w-8;
     }
+    .status-icon-warning {
+        @apply text-white h-8 w-8;
+    }
     .status-text-connect {
+        @apply text-white text-lg ml-1 mr-2 ;
+    }
+    .status-text-warning {
         @apply text-white text-lg ml-1 mr-2 ;
     }
     .status-text {

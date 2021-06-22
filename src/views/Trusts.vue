@@ -1,15 +1,30 @@
 <template>
-    <PageTitle >
-        <template v-slot:title> Trust Funds </template>
-        <template v-slot:buttons>           
-            <Button class="btn-rounded btn-primary" :onClick="onCreateNew">
-                Create New
-            </Button>            
-        </template>
-    </PageTitle>
-
-    <div class="px-5">
-        <LinkCards :reload="reload" :displaymode="2"></LinkCards>
+    <div v-if="store.state.isConnected">
+        <PageTitle >
+            <template v-slot:title> Trust funds created by you</template>
+            <template v-slot:buttons>           
+                <Button class="btn-rounded btn-primary" :onClick="onCreateNew">
+                    Create New
+                </Button>            
+            </template>
+        </PageTitle>
+        <div class="px-5">
+            <TrustList @items-loaded="onItemsLoaded"></TrustList>
+        </div>
+    </div>
+    <!-- 
+        When empty, display some helpful text
+    --> 
+    <ConnectBlock/>
+    <div v-if="displayHelpText">
+        <h1 class="text-4xl mt-10 ml-5 tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+            <span class="block inline">Lets make your first Trust </span>
+            <div class="flex items-center space-x-5 mt-10">
+                <span class="block text-indigo-600">Click </span>
+                <Button class="btn-rounded btn-primary" @click="onCreateNew">Create New</Button>
+                <span class="block text-indigo-600">to begin</span>
+            </div>
+        </h1>
     </div>
 
     <!-- 
@@ -26,13 +41,18 @@ import { ref } from 'vue';
 import store from '../store';
 import Button from '../components/Button';
 import PageTitle from '../components/PageTitle';
-import LinkCards from '../components/LinkCards';
+import TrustList from '../components/TrustList';
 import CreateTrust from '../components/CreateTrust';
+import ConnectBlock from '../components/ConnectBlock';
+
 import { toWei } from '../helpers'
 
 const selectedTrust = ref([]);
-const reload = ref(false);
+const displayHelpText = ref(false);
 
+const onItemsLoaded = (num) => {
+    displayHelpText.value = num === 0;
+}
 //
 // Create Handlers
 //
@@ -62,8 +82,6 @@ const onCreate = async () => {
     closeCreateDialog(); 
     console.log(selectedTrust.value.etherAmount);
     await createTrust(selectedTrust.value);
-    reload.value = true;
-    //await this.$refs.LinkCards.loadTrusts();
 }
 
 const createTrust = async (trust) => {
