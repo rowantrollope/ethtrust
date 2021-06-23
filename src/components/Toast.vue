@@ -1,6 +1,6 @@
 <template>
   <!-- Global notification live region, render this permanently at the end of the document -->
-  <div aria-live="assertive" class="fixed inset-0 flex items-end px-4 py-6 pointer-events-none sm:p-6 sm:items-start">
+  <div aria-live="assertive" class="z-50 fixed inset-0 flex items-end px-4 py-6 pointer-events-none sm:p-6 sm:items-start">
     <div class="w-full flex flex-col items-center space-y-4 sm:items-end">
       <!-- Notification panel, dynamically insert this into the live region when it needs to be displayed -->
       <transition enter-active-class="transform ease-out duration-300 transition" enter-from-class="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2" enter-to-class="translate-y-0 opacity-100 sm:translate-x-0" leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
@@ -8,7 +8,7 @@
           <div class="p-4">
             <div class="flex items-start">
               <div class="flex-shrink-0">
-                <CheckCircleIcon class="h-6 w-6 text-green-400" aria-hidden="true" />
+                <CheckCircleIcon class="h-8 w-8 text-green-400" aria-hidden="true" />
               </div>
               <div class="ml-3 w-0 flex-1 pt-0.5">
                 <p class="text-xl font-medium text-gray-900">
@@ -40,73 +40,7 @@ const props = defineProps({
     open: Boolean,
 });
 
-//const open = ref(true);
-
 </script>
 
 <style scoped>
-    .card {
-        @apply relative 
-        py-0 
-        flex 
-        items-center 
-        text-center
-        border
-        border-gray-300
-        shadow-lg
-        bg-white 
-        hover:border-black
-        focus-within:ring-2 
-        focus-within:ring-offset-4 
-        focus-within:ring-green-800 
-    }
-    .card-tag {
-        @apply flex-shrink-0 
-            flex 
-            items-center 
-            bg-gradient-to-b
-            from-black
-            via-black
-            to-gray-700
-            text-white 
-            justify-center 
-            w-20 
-            h-full 
-            ml-2
-            rounded-l-2xl;
-    }
-    .eth-amount {
-        @apply -ml-2 text-green-500 text-lg flex items-center;
-    }
-    .cert-name {
-            position: absolute;
-            top: 35%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-    }
-    .cert-eth {
-            position: absolute;
-            top: 70%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-    }
-    .cert-creator {
-            position: absolute;
-            top: 75%;
-            left: 23%;
-            transform: translate(-50%, -50%);
-    }
-    .cert-trustee {
-            position: absolute;
-            top: 75%;
-            left: 77%;
-            transform: translate(-50%, -50%);
-    }
-    .cert-date {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-    }
-
 </style>

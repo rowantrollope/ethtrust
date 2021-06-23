@@ -13,6 +13,10 @@
     <EditTrust :show="isEditDialogVisible" :trust="selectedTrust" @save="onSave" @cancel="onCancelEdit" @delete="onDelete" @withdraw="onWithdraw" @deposit="onDeposit">
         <template v-slot:title>Trust Fund: {{ selectedTrust.name }}</template>
     </EditTrust>
+    <ToastNotification :open="toast.open">
+        <template v-slot:title>{{toast.title}}</template>
+        <template v-slot:message>{{toast.message}}</template>
+    </ToastNotification>
 
 </template>
 
@@ -25,6 +29,21 @@ import store from '../store';
 import EditTrust from './EditTrust';
 import TrustCard from './TrustCard';
 import Button from './Button';
+import ToastNotification from './Toast';
+
+const toast = ref({
+    title: '',
+    message: '',
+    open: false,
+});
+
+const showToast = (title, message, timeout=3000) =>
+{
+    toast.value.title = title;
+    toast.value.message = message;
+    toast.value.open = true;
+    setTimeout(() => { toast.value.open = false }, timeout);
+}
 
 import { toWei,  } from '../helpers'
 
@@ -81,6 +100,7 @@ const onSave = async () => {
 
     await updateTrust(selectedTrust.value);
     await loadTrusts();
+    showToast("Success", "Trust Successfully Updated");
 }
 const onDelete = () => { 
     console.log("Selected Trust to delete", selectedTrust.value);
@@ -140,7 +160,7 @@ const updateTrust = async (trust) => {
     const beneficiary = trust.beneficiary;
     const name = trust.name;
 
-    console.log(`UpdateTrust ${trust.key}: Name: ${name}, Date: ${date}, Beneficiary: ${beneficiary}, Account: ${store.state.mainAccount}`);
+    console.log(`UpdateTrust ${trust.key}: Name: ${name}, Date: ${date}, Beneficiary: ${beneficiary}, Account: ${store.state.ts.mainAccount}`);
     
     await store.state.ts.trustContract.methods.updateTrust(trust.key, beneficiary, name, date)
         .send( { from: account });
@@ -149,9 +169,9 @@ const updateTrust = async (trust) => {
 
 const deleteTrust = async (trust) => {
     console.log("Delete Trust " + trust.key);
-    await store.state.ts.trustContract.methods.withdrawAll(trust.key).send( { from: store.state.mainAccount } );
-    await store.state.ts.trustContract.methods.deleteTrust(trust.key).send( { from: store.state.mainAccount } );
-    await loadTrusts();
+    await store.state.ts.trustContract.methods.withdrawAll(trust.key).send( { from: store.state.ts.mainAccount } );
+    await store.state.ts.trustContract.methods.deleteTrust(trust.key).send( { from: store.state.ts.mainAccount } );
+    await loadTrusts().then( () => { showToast('Success', 'Trust Deleted'); } );
 }
 
 /*

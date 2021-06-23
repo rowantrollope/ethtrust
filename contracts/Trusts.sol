@@ -12,8 +12,9 @@ contract Trusts {
         bytes32 key;
         string name;
         address beneficiary;
-        uint etherAmount;
+        address trustee;
         address creator;
+        uint etherAmount;
         uint createdDate;
         uint maturityDate;
     }
@@ -34,7 +35,7 @@ contract Trusts {
         nextKey = '0x1';
     }
 
-    function createTrust (address _beneficiary, 
+    function createTrust (address _beneficiary, address _trustee,
                          string memory _name,  
                          uint _maturityDate) public payable {
         
@@ -46,6 +47,7 @@ contract Trusts {
         t.key = nextKey;
         t.name = _name;
         t.beneficiary = _beneficiary;
+        t.trustee = _trustee;
         t.etherAmount = msg.value;
         t.creator = msg.sender;
         t.createdDate = now;
@@ -65,6 +67,9 @@ contract Trusts {
         
         require(trustSet.exists(key), "Can't update a trust that doesn't exist.");
         Trust storage t = trusts[key];
+
+        require(msg.sender == t.creator, "Only the creator can update this trust.");
+
         t.name = _name;
         t.beneficiary = _beneficiary;
         t.maturityDate = _maturityDate;
@@ -137,7 +142,6 @@ contract Trusts {
     }
 
     // Todo: Add OnlyAfter
-    // Todo: Add Partial withdrawals
     
     function withdraw (bytes32 key, uint _etherAmount) public payable {
         
@@ -145,7 +149,14 @@ contract Trusts {
 
         Trust storage t = trusts[key];
 
-        require(msg.sender == t.creator || msg.sender == t.beneficiary, "Only Creator and Owner can withdraw");
+        require(msg.sender == t.creator || 
+                msg.sender == t.beneficiary ||
+                msg.sender == t.trustee
+                , "Only Creator and Owner can withdraw");
+        
+        if(msg.sender != t.creator)
+            require(t.maturityDate >= now, "Cannot withdraw until Maturity date");
+ 
         //TODO: Check that date allows
         require(_etherAmount <= t.etherAmount, "Can't withdraw more ether than exists in trust");
 
@@ -159,14 +170,5 @@ contract Trusts {
         require(trustSet.exists(key), "Trust doesn't exist.");
         Trust memory t = trusts[key];
         withdraw(key, t.etherAmount);
-    }
-    
-    modifier onlyAfter(uint _time) {
-
-        require(
-            now >= _time,
-            "Function called too early."
-        );
-        _;
     }
 }

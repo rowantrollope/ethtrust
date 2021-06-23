@@ -25,7 +25,7 @@
                                 <div class="rounded-md px-4 py-5 bg-white sm:p-6">
                                     <div class="grid grid-cols-12 gap-6">
                                         <div class="fieldblock ">
-                                            <label for="trust_name" class="label-text">Trust name</label>
+                                            <label for="trust_name" class="label-text">Name</label>
                                             <input type="text" 
                                                 v-model="trust.name" 
                                                 placeholder="Enter Trust name"
@@ -34,14 +34,9 @@
                                                 autocomplete="trust-name" 
                                                 class="input-field" />
                                         </div>
-<!--
-                                        <div class="col-span-12">
-                                            <label for="eth_amount" class="label-text">ETH Amount</label>
-                                            <input type="text" v-model="trust.etherAmount" name="eth_amount" id="eth_amount" autocomplete="eth_amount" class="input-field" />
-                                        </div>
--->
+
                                         <div class="fieldblock">
-                                            <label for="beneficiary_account" class="label-text">Beneficiary Account</label>
+                                            <label for="beneficiary_account" class="label-text">Beneficiary</label>
                                             <input type="text" 
                                                     placeholder="Enter account number for beneficiary"
                                                     v-model="trust.beneficiary" 
@@ -51,11 +46,17 @@
                                                     class="input-field" />
                                         </div>
                                         <div class="fieldblock">
-<!--
-                                            <input type="text" v-model="trust.maturityDate" name="maturity_date" id="maturity_date" autocomplete="maturity_date" class="input-field" />
--->
+                                            <label for="trustee_account" class="label-text">Trustee</label>
+                                            <input type="text" 
+                                                    placeholder="(Optional) Enter account number for trustee"
+                                                    v-model="trust.trustee" 
+                                                    name="trustee_account" 
+                                                    id="trustee_account" 
+                                                    autocomplete="trustee_account" 
+                                                    class="input-field" />
+                                        </div>
+                                        <div class="fieldblock">
                                             <label for="maturity_date" class="label-text">Maturity Date</label>
-                                            <!--<DatePicker v-model="date"/>-->       
                                             <DatePicker v-model="maturityDate" mode="date" class="flex-grow">
                                                 <template v-slot="{ inputValue, inputEvents }">
                                                     <input class="input-field"
@@ -67,7 +68,7 @@
 
                                         </div>
 
-                                        <div class="fieldblock">
+                                        <div class="fieldblock text-lg">
                                             <EthInput :balance="store.state.ts.getEthBalance(5)" v-model="trust.etherAmount">
                                                 Deposit Amount:
                                             </EthInput>

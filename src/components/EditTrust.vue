@@ -72,6 +72,12 @@
                                             <div class="col-span-8">
                                                 <input type="text" v-model="trust.beneficiary" name="beneficiary_account" id="beneficiary_account" autocomplete="beneficiary_account" class="input-field" />
                                             </div>
+                                            <div class="col-span-4 justify-self-end pt-2 ">
+                                                <label for="trustee_account" class="label-text">Trustee Account</label>
+                                            </div>
+                                            <div class="col-span-8">
+                                                <input type="text" v-model="trust.beneficiary" name="trustee_account" id="trustee_account" autocomplete="trustee_account" class="input-field" />
+                                            </div>
 
                                             <div class="col-span-4 justify-self-end pt-2 ">
                                                 <label for="maturity_date" class="label-text">Maturity Date</label>

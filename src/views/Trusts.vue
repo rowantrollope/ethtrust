@@ -91,6 +91,7 @@ const onCreate = async () => {
 const createTrust = async (trust) => {
     // setup the values
     const account = store.state.ts.mainAccount;
+    const trustee = store.state.ts.mainAccount;
     const date = trust.maturityDate;
     const amount = toWei(trust.etherAmount.toString(), 'Ether');
     const address = trust.beneficiary;
@@ -98,7 +99,7 @@ const createTrust = async (trust) => {
 
     console.log(`CreateTrust: Amount: ${amount}, Account: ${store.state.mainAccount}`);
     
-    await store.state.ts.trustContract.methods.createTrust(address, name, date)
+    await store.state.ts.trustContract.methods.createTrust(address, trustee, name, date)
         .send( {value: amount.toString(), from: account });
     
 }

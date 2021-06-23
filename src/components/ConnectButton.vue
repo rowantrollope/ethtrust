@@ -14,6 +14,7 @@
                 }" />
                 <!-- <StatusOnlineIcon<class="status-icon" aria-hidden="true" /> -->
                 <span class="status-text">Connected</span>
+                <ChevronDownIcon class="text-black -ml-1 h-6 w-6" aria-hidden="true" />
             </MenuButton>
             <MenuButton v-else-if="store.state.ts.connectionError" class="menu-button-warning" @click="onClicked()">
                 <StatusOnlineIcon class="status-icon-warning" aria-hidden="true" />
@@ -68,8 +69,9 @@
 import { ref, onActivated, onMounted, onUpdated } from 'vue'
 import blockies from './Identicon.vue'
 
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
-import { StatusOnlineIcon, MenuIcon } from '@heroicons/vue/outline'
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
+import { StatusOnlineIcon, MenuIcon } from '@heroicons/vue/outline';
+import { ChevronDownIcon } from '@heroicons/vue/solid';
 import Button from './Button.vue';
 import store from '../store';
 

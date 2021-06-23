@@ -22,6 +22,7 @@ class TrustService {
             exchange: {},
             provider: {},
             rememberMe: true,
+            formatter: null,
             }
         }
     }
@@ -92,6 +93,11 @@ class TrustService {
         this.exchange = data;   
         console.log(this.exchange); 
 
+        // Create our number formatter.
+        this.formatter = new Intl.NumberFormat(undefined, {
+            style: 'currency',
+            currency: 'USD',
+            maximumFractionDigits: 2});
     }
 
     async load(callback) {
@@ -126,9 +132,29 @@ class TrustService {
         }            
     }
     ETH2USD(eth) {
+        if(!this.isConnected)
+            return;
+        if(!this.exchange) 
+            return;
+            
         return this.exchange.USD * toEther(eth);
     }
+    ETH2USDString(eth) {
+        if(!this.isConnected) return;
+
+        if(!this.formatter)
+        {
+            this.formatter = new Intl.NumberFormat(undefined, {
+                style: 'currency',
+                currency: 'USD',
+                maximumFractionDigits: 0,
+                minimumFractionDigits: 0 })
+        }  
+
+        return this.formatter.format(this.ETH2USD(eth));
+    }
     getEthBalance(_length) { 
+        if(!this.isConnected) return;
 
         let bal = window.web3.utils.fromWei(this.balance, 'Ether');
         
@@ -139,6 +165,8 @@ class TrustService {
     
     }
     async refreshBalance() {
+        if(!this.isConnected) return;
+
         this.balance = await window.web3.eth.getBalance(this.mainAccount);
     }
         
