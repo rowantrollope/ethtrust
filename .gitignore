@@ -21,3 +21,7 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+build/contracts/HitchensUnorderedKeySet.json
+build/contracts/HitchensUnorderedKeySetLib.json
+build/contracts/Migrations.json
+build/contracts/Trusts.json
