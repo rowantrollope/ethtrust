@@ -68,7 +68,7 @@
                                         </div>
 
                                         <div class="fieldblock">
-                                            <EthInput :balance="store.state.trustSvc.getEthBalance(5)" v-model="trust.etherAmount">
+                                            <EthInput :balance="store.state.ts.getEthBalance(5)" v-model="trust.etherAmount">
                                                 Deposit Amount:
                                             </EthInput>
                                         </div>

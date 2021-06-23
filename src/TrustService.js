@@ -21,6 +21,7 @@ class TrustService {
             balance: 0,
             exchange: {},
             provider: {},
+            rememberMe: true,
             }
         }
     }
@@ -34,11 +35,12 @@ class TrustService {
     
     // Connect to blockchain and contract
     async connect() {
-
+        console.log('connect');
         this.provider = await detectEthereumProvider();
 
         if(this.provider) {
-            //console.log(this.provider);
+            console.log('this.provider', this.provider);
+
             window.web3 = new Web3(window.ethereum);
 
             await this.provider.request({method: 'eth_requestAccounts'});
@@ -67,28 +69,28 @@ class TrustService {
                 }
 
             }
-
             this.isConnected = true;
+ 
+            console.log("isConnected ", this.isConnected);
 
-            if(true) {
-                let currentAccount = null;
-                this.provider.on('accountsChanged', this.handleAccountsChanged);
-
-            } else {
-                console.error("Please Install MetaMask!", error);
-
-                this.connectionErrorMessage = error;
-                this.connectionError = true;
-                this.isConnected = false;
-            }
+            this.provider.on('accountsChanged', this.handleAccountsChanged);
         }
     }
     async init() {
 
+        // Connect to BC
+        // TODO : Drop cookie
+        this.rememberMe = true;
+        if(this.rememberMe)
+        {
+            console.log("init()")
+            this.connect();
+        }
         // LOAD ETH-USD 
         const response = await fetch("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,BTC,EUR");
         const data = await response.json();
-        this.exchange = data;    
+        this.exchange = data;   
+        console.log(this.exchange); 
 
     }
 
@@ -119,7 +121,6 @@ class TrustService {
             console.log('Please connect to MetaMask.');
         } else if (accounts[0] !== this.mainAccount) {
             console.log("handleAccountsChanged()", accounts[0])
-            store.state.mainAccount = accounts[0];
             this.mainAccount = accounts[0];
             // Do any other work!
         }            

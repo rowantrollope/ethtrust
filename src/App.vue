@@ -11,16 +11,7 @@
     import store from './store';
     
     const init = async () => { 
-        let ts = new TrustService;
-        store.state.trustSvc = ts;
-
-        ts.init().then(() => {
-            // Make these variables reactive...
-            store.state.isConnected = ts.isConnected;
-            store.state.connectionError = ts.connectionError;
-            store.state.balance = ts.balance;
-            store.state.mainAccount = ts.mainAccount;
-        });
+        store.state.ts.init();
     }
     init();
     //const beforeMount = onBeforeMount( () => {}});

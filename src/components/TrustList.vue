@@ -35,9 +35,8 @@ const props = defineProps({
 const emit = defineEmit(['items-loaded']);
 
 const trusts = ref([]);
-const ts = store.state.trustSvc;
 
-const changed = watch(() => store.state.mainAccount,
+const changed = watch(() => store.state.ts.mainAccount,
   (account, prevAccount) => {
     console.log("MainAccountChanges()", account);
     loadTrusts();
@@ -52,7 +51,7 @@ const reload = watch(() => props.reload,
   }
 )
 
-const connected = watch(() => store.state.isConnected,
+const connected = watch(() => store.state.ts.isConnected,
   (connected, prevConnected) => {
     if(connected)
         loadTrusts();
@@ -104,26 +103,26 @@ const onDeposit = (amount) => {
 }  
 const deposit = async (trust, _amount) => {
     // setup the values
-    const account = store.state.mainAccount;
+    const account = store.state.ts.mainAccount;
     const key = trust.key;
     const amount = toWei(_amount);
 
     console.log(`deposit() ${trust.key}: ${amount}, Account: ${store.state.mainAccount}`);
    
-    await ts.trustContract.methods.depositTrust(key)
+    await store.state.ts.trustContract.methods.depositTrust(key)
         .send( {value: amount.toString(), from: account });
     
     await loadTrusts();
 }
 const withdraw = async (trust, _amount) => {
     // setup the values
-    const account = store.state.mainAccount;
+    const account = store.state.ts.mainAccount;
     const key = trust.key;
     const amount = toWei(_amount);
 
-    console.log(`withdraw() ${trust.key}: ${amount}, Account: ${store.state.mainAccount}`);
+    console.log(`withdraw() ${trust.key}: ${amount}, Account: ${store.state.ts.mainAccount}`);
    
-    await ts.trustContract.methods.withdraw(key, amount)
+    await store.state.ts.trustContract.methods.withdraw(key, amount)
         .send( { from: account });
     
     await loadTrusts();
@@ -136,22 +135,22 @@ const onCancelEdit = () => {
 const updateTrust = async (trust) => {
     
     // setup the values
-    const account = store.state.mainAccount;
+    const account = store.state.ts.mainAccount;
     const date = trust.maturityDate;
     const beneficiary = trust.beneficiary;
     const name = trust.name;
 
     console.log(`UpdateTrust ${trust.key}: Name: ${name}, Date: ${date}, Beneficiary: ${beneficiary}, Account: ${store.state.mainAccount}`);
     
-    await ts.trustContract.methods.updateTrust(trust.key, beneficiary, name, date)
+    await store.state.ts.trustContract.methods.updateTrust(trust.key, beneficiary, name, date)
         .send( { from: account });
 
 }
 
 const deleteTrust = async (trust) => {
     console.log("Delete Trust " + trust.key);
-    await ts.trustContract.methods.withdrawAll(trust.key).send( { from: store.state.mainAccount } );
-    await ts.trustContract.methods.deleteTrust(trust.key).send( { from: store.state.mainAccount } );
+    await store.state.ts.trustContract.methods.withdrawAll(trust.key).send( { from: store.state.mainAccount } );
+    await store.state.ts.trustContract.methods.deleteTrust(trust.key).send( { from: store.state.mainAccount } );
     await loadTrusts();
 }
 
@@ -164,8 +163,8 @@ const loadTrusts = async() => {
     
     trusts.value = [];
 
-    trusts.value = await store.state.trustSvc.load((trust) => { 
-        return trust.creator.toLowerCase() === store.state.mainAccount.toLowerCase(); } ); 
+    trusts.value = await store.state.ts.load((trust) => { 
+        return trust.creator.toLowerCase() === store.state.ts.mainAccount.toLowerCase(); } ); 
     
     console.log(trusts.value.length);
 

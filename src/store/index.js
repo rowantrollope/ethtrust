@@ -1,11 +1,8 @@
 import { reactive } from 'vue'
+import TrustService from '../TrustService'
 
 const state = reactive({
-    mainAccount: '',
-    isConnected: false,
-    connectionError: "",
-    balance: 0,
-    trustSvc: null,
+    ts: new TrustService,
 })
 
 export default {

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!store.state.isConnected">
+    <div v-if="!store.state.ts.isConnected">
         <h1 class="text-4xl mt-10 ml-5 tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
             <span class="block inline">Lets get you started! </span>
         </h1>
@@ -18,15 +18,11 @@ import store from '../store';
 import Button from '../components/Button';
 
 const onConnect = () => {
-    let ts = store.state.trustSvc;
-
-    if(!ts.isConnected) {
-        ts.connect().then(() => {
-            // Make these variables reactive...
-            store.state.isConnected = ts.isConnected;
-            store.state.connectionError = ts.connectionError;
-            store.state.balance = ts.balance;
-            store.state.mainAccount = ts.mainAccount;            
+    console.log("onConnect");
+    if(!store.state.ts.isConnected) {
+        store.state.ts.connect().then(() => {
+            console.log("Connected");
+            // Make these variables reactive...         
         });
     }
 }

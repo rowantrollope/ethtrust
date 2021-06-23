@@ -16,7 +16,6 @@ import store from '../store';
 import TrustCardEx from './TrustCardEx';
 
 const emit = defineEmit(['items-loaded']);
-const ts = store.state.trustSvc;
 
 const trusts = ref([]);
 /*
@@ -29,13 +28,13 @@ const trusts = ref([]);
     toDate(trust.maturityDate
 */
 
-const changed = watch(() => store.state.mainAccount,
+const changed = watch(() => store.state.ts.mainAccount,
   (account, prevAccount) => {
     console.log("MainAccountChanged()");
     loadTrusts();
   }
 )
-const connected = watch(() => store.state.isConnected,
+const connected = watch(() => store.state.ts.isConnected,
   (connected, prevConnected) => {
     if(connected)
         loadTrusts();
@@ -84,13 +83,13 @@ const onWithdraw = (amount) => {
 
 const withdraw = async (trust, _amount) => {
     // setup the values
-    const account = store.state.mainAccount;
+    const account = store.state.ts.mainAccount;
     const key = trust.key;
     const amount = toWei(_amount);
 
-    console.log(`withdraw() ${trust.key}: ${amount}, Account: ${store.state.mainAccount}`);
+    console.log(`withdraw() ${trust.key}: ${amount}, Account: ${store.state.ts.mainAccount}`);
    
-    await ts.trustContract.methods.withdraw(key, amount)
+    await store.state.ts.trustContract.methods.withdraw(key, amount)
         .send( { from: account });
     
     await loadTrusts();
@@ -103,8 +102,8 @@ LOAD TRUSTS
 */
 const loadTrusts = async() => {
 
-    trusts.value = await ts.load((trust) => { 
-        return trust.beneficiary.toLowerCase() === store.state.mainAccount.toLowerCase(); } ); 
+    trusts.value = await store.state.ts.load((trust) => { 
+        return trust.beneficiary.toLowerCase() === store.state.ts.mainAccount.toLowerCase(); } ); 
     
     emit('items-loaded', trusts.value.length);
 }

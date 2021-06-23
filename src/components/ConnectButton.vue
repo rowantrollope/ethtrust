@@ -3,7 +3,7 @@
     <!-- Profile dropdown -->
     <Menu as="div" class="menu">
         <div>
-            <MenuButton v-if="store.state.isConnected" class="h-8 menu-button" @click="onClicked()">
+            <MenuButton v-if="store.state.ts.isConnected" class="h-8 menu-button" @click="onClicked()">
                 <blockies class="-ml-5 ring-4 ring-white rounded-full" :opts="{
                 seed: store.state.mainAccount, // seed used to generate icon data, default: random
                 color: 'green', // to manually specify the icon color, default: random
@@ -15,27 +15,27 @@
                 <!-- <StatusOnlineIcon<class="status-icon" aria-hidden="true" /> -->
                 <span class="status-text">Connected</span>
             </MenuButton>
-            <MenuButton v-else-if="store.state.connectionError" class="menu-button-warning" @click="onClicked()">
+            <MenuButton v-else-if="store.state.ts.connectionError" class="menu-button-warning" @click="onClicked()">
                 <StatusOnlineIcon class="status-icon-warning" aria-hidden="true" />
                 <span class="status-text">Not Connected </span>
             </MenuButton>
-            <MenuButton v-else-if="!store.state.isConnected" class="menu-button-connect" v-on:click.prevent="onClicked()">
+            <MenuButton v-else-if="!store.state.ts.isConnected" class="menu-button-connect" v-on:click.prevent="onClicked()">
                 <StatusOnlineIcon class="status-icon-connect" aria-hidden="true" />
                 <span class="status-text-connect">Start</span>
             </MenuButton>
 
         </div>
         <transition enter-active-class="transition ease-out duration-200" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-            <MenuItems v-if="store.state.isConnected" class="menu-items">
+            <MenuItems v-if="store.state.ts.isConnected" class="menu-items">
                 <div class="flex-col vertical space-y-5">
                     <p class="flex text-xl border text-green-500 border-green-500 p-2 rounded-md ">
                         Successfully connected to the Blockchain
                     </p>
                     <p class="flex inline-block">
-                        Account: &nbsp; <b> {{ store.state.mainAccount }} </b>
+                        Account: &nbsp; <b> {{ store.state.ts.mainAccount }} </b>
                     </p>
                     <p class="flex">
-                        Balance: &nbsp; <b> {{ store.state.trustSvc.getEthBalance(5) }} ETH </b>
+                        Balance: &nbsp; <b> {{ store.state.ts.getEthBalance(5) }} ETH </b>
                     </p>
                 <!--
                 <div class="text-right">
@@ -44,16 +44,16 @@
                 -->
                 </div>
             </MenuItems>
-            <MenuItems v-else-if="store.state.connectionError" class="menu-items">
+            <MenuItems v-else-if="store.state.ts.connectionError" class="menu-items">
                 <div class="flex-col vertical space-y-5">
                 <p class="flex text-xl border text-red-500 border-red-500 p-2 rounded-md ">
                     Failed to connect to the Blockchain
                 </p>
                 <p>
-                    Error Message: {{ store.state.trustSvc.connectionErrorMessage }}
+                    Error Message: {{ store.state.ts.connectionErrorMessage }}
                 </p>
                 <p class="flex inline-block">
-                    Account: &nbsp; <b> {{ store.state.mainAccount }} </b>
+                    Account: &nbsp; <b> {{ store.state.ts.mainAccount }} </b>
                 </p>
                 <div class="text-right">
                 <Button class="btn btn-primary" @click="onClicked()">Try Again</Button>
@@ -74,30 +74,16 @@ import Button from './Button.vue';
 import store from '../store';
 
 const onDisconnect = () => {
-    let ts = store.state.trustSvc;
-    if(ts.isConnected)
+    if(store.state.ts.isConnected)
     {
-        ts.disconnect().then(() => {
-            store.state.isConnected = false;
-            store.state.connectionError = false;
-            store.state.balance = 0;
-            store.state.mainAccount = "";
+        store.state.ts.disconnect().then(() => {
         })
     }
 }
 const onClicked = () => {
-    let ts = store.state.trustSvc;
 
-    if(!ts.isConnected) {
-        ts.connect().then(() => {
-            // Make these variables reactive...
-            store.state.isConnected = ts.isConnected;
-            store.state.connectionError = ts.connectionError;
-            store.state.balance = ts.balance;
-            store.state.mainAccount = ts.mainAccount;
-            
-            //if(ts.connectionError)
-                //window.alert("Error connecting: " + ts.connectionError);
+    if(!store.state.ts.isConnected) {
+        store.state.ts.connect().then(() => {
         });
     }
 

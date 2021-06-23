@@ -1,6 +1,6 @@
 <template>
-    <div v-if="store.state.isConnected">
-        <div class="text-6xl border-b font-black leading-tight ml-5 mr-5 mt-1 mb-4">
+    <div v-if="store.state.ts.isConnected">
+        <div class="text-5xl font-black leading-tight ml-5 mr-5 mt-1 mb-4">
             Your trust funds: <br/>
         </div>
         <div class="px-5">

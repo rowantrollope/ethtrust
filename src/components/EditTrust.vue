@@ -25,11 +25,11 @@
                             <div class="col-span-12 text-base border-gray-500 rounded-md p-2">
                                 <p class="mt-1">
                                     <span class="-ml-2 text-green-500 text-lg flex items-center"> <svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" preserveAspectRatio="xMidYMid" viewBox="-38.39985 -104.22675 332.7987 625.3605"><path fill="#343434" d="M125.166 285.168l2.795 2.79 127.962-75.638L127.961 0l-2.795 9.5z"/><path fill="#8C8C8C" d="M127.962 287.959V0L0 212.32z"/><path fill="#3C3C3B" d="M126.386 412.306l1.575 4.6L256 236.587l-128.038 75.6-1.575 1.92z"/><path fill="#8C8C8C" d="M0 236.585l127.962 180.32v-104.72z"/><path fill="#141414" d="M127.961 154.159v133.799l127.96-75.637z"/><path fill="#393939" d="M127.96 154.159L0 212.32l127.96 75.637z"/></svg>
-                                        {{ toEther(trust.etherAmount) }} ETH </span>
+                                        {{ $filters.toEther(trust.etherAmount) }} ETH </span>
                                 </p>
-                                <p class="mt-1">Trust #: <b>{{ shortenAddress(trust.key)}}</b></p>
+                                <p class="mt-1">Trust #: <b>{{ $filters.shortenAddress(trust.key)}}</b></p>
                                 <p class="mt-1">Owner: <b>{{ trust.creator }}</b></p>
-                                <p class="mt-1"> Date Created: <b>{{ toDate(trust.createdDate) }}</b></p>
+                                <p class="mt-1"> Date Created: <b>{{ $filters.toDate(trust.createdDate) }}</b></p>
                             </div>
                             <div class="mt-5 hidden">
                                 <label for="tabs" class="sr-only">Select a tab</label>
@@ -109,7 +109,7 @@
 
                                 <p><b>Note: Funds will be returned to the owner of the trust.  Only the trust fund owner may withdraw. </b></p><br/>
                                 <p>Maximum withdrawal: 
-                                    <span class="text-green-500">{{toEther(trust.etherAmount)}} ETH</span>
+                                    <span class="text-green-500">{{$filters.toEther(trust.etherAmount)}} ETH</span>
                                 </p>
                                 <div class="grid grid-cols-12 mt-4 gap-6 items-center">
                                     <div class="col-span-12">
@@ -131,7 +131,7 @@
                             <div v-show="activeTab===2" class="tab-content">
                                 <p class="text-2xl">Add funds to trust fund. </p> <br/>
                                 <p><b>Note: Only ETH deposits are supported at this time.</b></p><br/>
-                                <p class="text-xl">Your Wallet Balance: <span class="text-bold text-green-600">{{ store.state.trustSvc.getEthBalance(5) }} ETH</span></p>
+                                <p class="text-xl">Your Wallet Balance: <span class="text-bold text-green-600">{{ store.state.ts.getEthBalance(5) }} ETH</span></p>
 
                                 <EthInput class="mt-3" v-model="ethDeposit">Deposit Amount</EthInput>
 
@@ -150,8 +150,8 @@
                             -->
                             <div v-show="activeTab===3" class="tab-content">
                                 <div class="text-2xl">Delete trust fund? </div> <br/>
-                                <div class="text-xl">Trust Fund Balance is <span class="text-bold text-green-600">{{ toEther(trust.etherAmount) }} ETH</span></div><br/>
-                                <div class="font-bold">Deleting this trust fund will transfer {{ toEther(trust.etherAmount) }} ETH to address: <br/><br/> </div> 
+                                <div class="text-xl">Trust Fund Balance is <span class="text-bold text-green-600">{{ $filters.toEther(trust.etherAmount) }} ETH</span></div><br/>
+                                <div class="font-bold">Deleting this trust fund will transfer {{ $filters.toEther(trust.etherAmount) }} ETH to address: <br/><br/> </div> 
                                 <div class="leading-tight text-center">{{trust.creator}}</div>
                                 <div class="dialog-footer">
 
@@ -175,10 +175,10 @@
 import { ref, watch, computed, onUpdated, defineProps, defineEmit } from 'vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { ExclamationIcon, XIcon } from '@heroicons/vue/outline'
+import { toDate } from '../helpers';
 
 import Button from './Button.vue';
 import { Calendar, DatePicker } from 'v-calendar';
-import { shortenAddress, toDate, toEther } from '../helpers'
 import store from '../store';
 import EthInput from './EthInput';
 

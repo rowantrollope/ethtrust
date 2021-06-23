@@ -2,12 +2,39 @@
     <div class="text-6xl font-black leading-tight ml-5 mr-5 mt-4 mb-4">
         Your trust funds: <br/>
     </div>
-    <div class="ml-5 mr-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <TestComponent></TestComponent>
-        <TestComponent></TestComponent>
-        <TestComponent></TestComponent>
-        <TestComponent></TestComponent>
-        <TestComponent></TestComponent>
+    <div class="ml-5 mr-5 grid gap-2 grid-cols-2">
+        <div class="bg-black text-right text-white">
+            Item 1:
+        </div>
+        <div class="bg-black text-white">
+            Information 1
+        </div>
+        <div class="bg-black text-right text-white">
+            Item 1:
+        </div>
+        <div class="bg-black text-white">
+            Information 1
+        </div>
+        <div class="bg-black text-right text-white">
+            Item 1:
+        </div>
+        <div class="bg-black text-white">
+            Information 1
+        </div>
+    </div>
+    <div class="flex ml-5 mr-5 mt-5 space-x-2">
+        <div class="text-right flex-shrink">
+            <p>Information 1 </p>
+            <p>item 2 </p>
+            <p>This is 3 </p>
+
+        </div>
+        <div class="flex-grow">
+            Information 1<br/>
+            Information 1<br/>
+            Information 1<br/>
+        </div>
+
     </div>
 </template>
 
