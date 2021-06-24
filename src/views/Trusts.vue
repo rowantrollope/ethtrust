@@ -1,5 +1,5 @@
 <template>
-    <div v-if="bc.state.isConnected">
+    <div v-if="bc.state.isConnected && ts.state.isConnected">
         <PageTitle >
             <template v-slot:title> Trust funds created by you</template>
             <template v-slot:buttons>           
@@ -45,8 +45,9 @@ import TrustList from '../components/TrustList';
 import CreateTrust from '../components/CreateTrust';
 import ConnectBlock from '../components/ConnectBlock';
 import bc from '../blockchain';
+import ts from '../services/TrustContract';
 
-import { toWei } from '../libs/helpers'
+import { toWei } from '../services/helpers'
 
 const selectedTrust = ref([]);
 const displayHelpText = ref(false);
@@ -82,11 +83,14 @@ const onCreateNew = () => {
 
 const onCreate = async () => { 
     closeCreateDialog(); 
-    console.log(selectedTrust.value.etherAmount);
-    await createTrust(selectedTrust.value);
+    
+    console.log("Creating Trust for etherAmount: ", selectedTrust.value.etherAmount);
+    
+    await createTrust(selectedTrust.value).then(() => {
+        reload.value = true;
+    });
     
     // Tell the TrustList to reload after we create a new trust
-    reload.value = true;
 }
 
 const createTrust = async (trust) => {
@@ -98,11 +102,8 @@ const createTrust = async (trust) => {
     const address = trust.beneficiary;
     const name = trust.name;
 
-    console.log(`CreateTrust: Amount: ${amount}, Account: ${bc.state.mainAccount}`);
-    
-    await store.state.ts.trustContract.methods.createTrust(address, trustee, name, date)
-        .send( {value: amount.toString(), from: account });
-    
+    await ts.createTrust(address, trustee, name, date, amount, account);
+
 }
 const onCancelCreate = () => { 
     closeCreateDialog(); 

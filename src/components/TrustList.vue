@@ -31,7 +31,7 @@ import TrustCard from './TrustCard';
 import Button from './Button';
 import ToastNotification from './Toast';
 import bc from '../blockchain';
-import ts from '../libs/TrustService';
+import ts from '../services/TrustContract';
 
 const toast = ref({
     title: '',
@@ -47,7 +47,7 @@ const showToast = (title, message, timeout=3000) =>
     setTimeout(() => { toast.value.open = false }, timeout);
 }
 
-import { toWei,  } from '../libs/helpers'
+import { toWei,  } from '../services/helpers'
 
 const props = defineProps({
     reload: Boolean,
@@ -132,13 +132,12 @@ const deposit = async (trust, _amount) => {
     const account = bc.state.mainAccount;
     const key = trust.key;
     const amount = toWei(_amount);
-
-    console.log(`deposit() ${trust.key}: ${amount}, Account: ${bc.state.mainAccount}`);
-   
-    await store.state.ts.trustContract.methods.depositTrust(key)
-        .send( {value: amount.toString(), from: account });
     
-    await loadTrusts();
+    await ts.deposit(key, amount, account);
+    
+    await loadTrusts().then( () => {
+        showToast('Success', `Deposited ${amount} successfully`);    
+    });  
 }
 const withdraw = async (trust, _amount) => {
     // setup the values
@@ -146,12 +145,11 @@ const withdraw = async (trust, _amount) => {
     const key = trust.key;
     const amount = toWei(_amount);
 
-    console.log(`withdraw() ${trust.key}: ${amount}, Account: ${bc.state.mainAccount}`);
-   
-    await store.state.ts.trustContract.methods.withdraw(key, amount)
-        .send( { from: account });
-    
-    await loadTrusts();
+    await ts.withdraw(key, amount, account);
+
+    await loadTrusts().then( () => {
+        showToast('Success', `Withdrew ${amount} successfully`);    
+    })
 }
 const onCancelEdit = () => { 
     Object.assign(selectedTrust.value, trustBeforeEdit); 
@@ -166,18 +164,21 @@ const updateTrust = async (trust) => {
     const beneficiary = trust.beneficiary;
     const name = trust.name;
 
-    console.log(`UpdateTrust ${trust.key}: Name: ${name}, Date: ${date}, Beneficiary: ${beneficiary}, Account: ${store.state.ts.mainAccount}`);
+    await ts.updateTrust(trust.key, beneficiary, name, date, account);
     
-    await store.state.ts.trustContract.methods.updateTrust(trust.key, beneficiary, name, date)
-        .send( { from: account });
-
+    await loadTrusts().then( () => {
+        showToast('Success', 'Trust Updated Successfully');    
+    })
 }
 
 const deleteTrust = async (trust) => {
     console.log("Delete Trust " + trust.key);
-    await store.state.ts.trustContract.methods.withdrawAll(trust.key).send( { from: bc.state.mainAccount } );
-    await store.state.ts.trustContract.methods.deleteTrust(trust.key).send( { from: bc.state.mainAccount } );
-    await loadTrusts().then( () => { showToast('Success', 'Trust Deleted'); } );
+    
+    await ts.deleteTrust(trust.key);
+
+    await loadTrusts().then( () => { 
+        showToast('Success', 'Trust Deleted'); 
+    });
 }
 
 /*
@@ -188,12 +189,10 @@ LOAD TRUSTS
 const loadTrusts = async() => {
     trusts.value = [];
 
-    trusts.value = await store.state.ts.load((trust) => { 
+    trusts.value = await ts.load((trust) => { 
         return trust.creator.toLowerCase() === bc.state.mainAccount.toLowerCase(); } ); 
     
-    console.log(trusts.value.length);
-
-    emit('items-loaded', trusts.value.length);
+    emit('items-loaded', trusts.value ? trusts.value.length : 0);
 }
 
 const mounted = onMounted(() => {

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!bc.state.isConnected">
+    <div v-if="!bc.state.isConnected || !ts.state.isConnected">
         <h1 class="text-4xl mt-10 ml-5 tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
             <span class="block inline">Lets get you started! </span>
         </h1>
@@ -17,14 +17,14 @@
 import store from '../store';
 import Button from '../components/Button';
 import bc from '../blockchain';
+import ts from '../services/TrustContract';
 
-const onConnect = () => {
+const onConnect = async () => {
     console.log("onConnect");
     if(!bc.state.isConnected) {
-        store.state.ts.connect().then(() => {
-            console.log("Connected");
-            // Make these variables reactive...         
-        });
+        bc.connect().then(() => {
+            ts.init();
+        }); 
     }
 }
 

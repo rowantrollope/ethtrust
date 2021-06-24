@@ -15,6 +15,7 @@ import { ref } from 'vue'
 import store from '../store';
 import TrustCardEx from './TrustCardEx';
 import bc from '../blockchain';
+import ts from '../services/TrustContract';
 
 const emit = defineEmit(['items-loaded']);
 
@@ -40,14 +41,6 @@ const connected = watch(() => bc.state.isConnected,
     if(connected)
         loadTrusts();
   }
-)
-
-const reload = watch(() => props.reload, 
-    (reload, prevReload) => {
-        console.log("Reload()");
-        props.reload = false;
-        loadTrusts();
-    }
 )
 
 //
@@ -83,14 +76,13 @@ const onWithdraw = (amount) => {
 
 const withdraw = async (trust, _amount) => {
     // setup the values
-    const account = store.state.ts.mainAccount;
+    const account = bc.mainAccount;
     const key = trust.key;
     const amount = toWei(_amount);
 
-    console.log(`withdraw() ${trust.key}: ${amount}, Account: ${store.state.ts.mainAccount}`);
+    console.log(`withdraw() ${trust.key}: ${amount}, Account: ${bc.mainAccount}`);
    
-    await store.state.ts.trustContract.methods.withdraw(key, amount)
-        .send( { from: account });
+    await ts.withdraw(key, amount, account)
     
     await loadTrusts();
 }
@@ -102,10 +94,10 @@ LOAD TRUSTS
 */
 const loadTrusts = async() => {
 
-    trusts.value = await store.state.ts.load((trust) => { 
+    trusts.value = await ts.load((trust) => { 
         return trust.beneficiary.toLowerCase() === bc.state.mainAccount.toLowerCase(); } ); 
     
-    emit('items-loaded', trusts.value.length);
+    emit('items-loaded', trusts.value ? trusts.value.length : 0);
 }
 
 const mounted = onMounted(() => {

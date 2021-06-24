@@ -22,24 +22,18 @@
 
 <script setup="props, {emit}">
 
-import { ref, computed, onMounted } from 'vue';
-import { round } from '../libs/helpers';
+import { ref, computed, inject } from 'vue';
+import { round } from '../services/helpers';
 import store from '../store';
+import currencyExchange from '../services/currencyExchange';
 
+const exchange = inject('exchange');
 const eth = ref(0);
-const exchange = ref(Object);
-const eth2usd = computed(() => round(props.modelValue * exchange.value.USD));
-//const eth2usd = computed(() => store.state.ts.ETH2USDString(props.modelValue.toString()) );
+const eth2usd = computed(() => round(props.modelValue * exchange.exchange.USD));
 
 const props = defineProps({
     modelValue: Number,
     balance: Number,
-});
-
-const mounted = onMounted(async () => {
-    const response = await fetch("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,BTC,EUR");
-    const data = await response.json();
-    exchange.value = data;    
 });
 
 </script>

@@ -4,17 +4,28 @@
 </template>
 
 <script setup>
-    import { ref, onBeforeMount } from 'vue';
+    import { ref, provide, onBeforeMount } from 'vue';
     import Nav from './components/Nav.vue'; 
     import Web3 from 'web3';
-    import TrustService from './libs/TrustService.js';
-    import store from './store';
-    
+    import ts from './services/TrustContract';
+    import bc from './blockchain';
+    import currencyExchange from './services/currencyExchange';
+
+    const exchange = new currencyExchange;
+
     const init = async () => { 
-        store.state.ts.init();
+        // PRIOR WAY to Connect to BC: store.state.ts.init();
+        if(true)
+        {
+            bc.connect().then(() => {
+                ts.init();
+            }); 
+        }
+        
+        provide('exchange', exchange);
+
     }
     init();
-    //const beforeMount = onBeforeMount( () => {}});
 
 </script>
 

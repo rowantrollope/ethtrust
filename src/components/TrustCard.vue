@@ -45,17 +45,20 @@
 
 <script setup="props, {emit}">
 
-import { defineProps, computed } from 'vue'
+import { defineProps, inject, computed } from 'vue'
 import { ref } from 'vue'
 import { ChevronRightIcon } from '@heroicons/vue/outline'
-import store from '../store';
+import bc from '../blockchain';
+import currencyExchange from '../services/currencyExchange';
+
+const exchange = inject('exchange');
 
 const props = defineProps({
     trust: Object,
 });
 const emit = defineEmit(['onclick']);
 
-const eth2usd = computed(() => store.state.ts.ETH2USDString(props.trust.etherAmount));
+const eth2usd = computed(() => exchange.eth2usdFormatted(props.trust.etherAmount));
 
 </script>
 

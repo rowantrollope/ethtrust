@@ -137,7 +137,7 @@
                             <div v-show="activeTab===2" class="tab-content">
                                 <p class="text-2xl">Add funds to trust fund. </p> <br/>
                                 <p><b>Note: Only ETH deposits are supported at this time.</b></p><br/>
-                                <p class="text-xl">Your Wallet Balance: <span class="text-bold text-green-600">{{ store.state.ts.getEthBalance(5) }} ETH</span></p>
+                                <p class="text-xl">Your Wallet Balance: <span class="text-bold text-green-600">{{ bc.etherBalance.value }} ETH</span></p>
 
                                 <EthInput class="mt-3" v-model="ethDeposit">Deposit Amount</EthInput>
 
@@ -181,7 +181,8 @@
 import { ref, watch, computed, onUpdated, defineProps, defineEmit } from 'vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { ExclamationIcon, XIcon } from '@heroicons/vue/outline'
-import { toDate } from '../libs/helpers';
+import { toDate } from '../services/helpers';
+import bc from '../blockchain';
 
 import Button from './Button.vue';
 import { Calendar, DatePicker } from 'v-calendar';

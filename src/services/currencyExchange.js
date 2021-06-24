@@ -1,3 +1,4 @@
+import { ref } from 'vue';
 import { round, toEther } from './helpers';
 
 export default class currencyExchange {
@@ -9,8 +10,11 @@ export default class currencyExchange {
         }
     }
     
+    name = ref("CurrencyExchange");
+
     constructor() {
-        console.log("CURRENCYEXCHANGE Constructor");
+        this.name.value = "CurrencyExchange";
+        console.log(this.name + "Constructor");
         this.init();
     }
     

@@ -1,8 +1,7 @@
 import { reactive } from 'vue'
-import TrustService from '../libs/TrustService'
+import TrustContract from '../services/TrustContract'
 
 const state = reactive({
-    ts: new TrustService,
 })
 
 export default {

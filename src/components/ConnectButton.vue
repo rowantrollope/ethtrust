@@ -3,9 +3,9 @@
     <!-- Profile dropdown -->
     <Menu as="div" class="menu">
         <div>
-            <MenuButton v-if="bc.state.isConnected" class="h-8 menu-button" @click="onClicked()">
+            <MenuButton v-if="bc.state.isConnected && ts.state.isConnected" class="h-8 menu-button" @click="onClicked()">
                 <blockies class="-ml-5 ring-4 ring-white rounded-full" :opts="{
-                seed: store.state.mainAccount, // seed used to generate icon data, default: random
+                seed: bc.state.mainAccount, // seed used to generate icon data, default: random
                 color: 'green', // to manually specify the icon color, default: random
                 bgcolor: 'blue', // choose a different background color, default: random
                 size: 8, // width/height of the icon in blocks, default: 8
@@ -36,7 +36,7 @@
                         Account: &nbsp; <b> {{ bc.state.mainAccount }} </b>
                     </p>
                     <p class="flex">
-                        Balance: &nbsp; <b> {{ store.state.ts.getEthBalance(5) }} ETH </b>
+                        Balance: &nbsp; <b> {{ bc.etherBalance.value }} ETH </b>
                     </p>
                 <!--
                 <div class="text-right">
@@ -45,13 +45,13 @@
                 -->
                 </div>
             </MenuItems>
-            <MenuItems v-else-if="store.state.ts.connectionError" class="menu-items">
+            <MenuItems v-else-if="ts.connectionError" class="menu-items">
                 <div class="flex-col vertical space-y-5">
                 <p class="flex text-xl border text-red-500 border-red-500 p-2 rounded-md ">
                     Failed to connect to the Blockchain
                 </p>
                 <p>
-                    Error Message: {{ bc.state.connectionErrorMessage }}
+                    Error Message: {{ ts.connectionErrorMessage }}
                 </p>
                 <p class="flex inline-block">
                     Account: &nbsp; <b> {{ bc.state.mainAccount }} </b>
@@ -73,24 +73,17 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { StatusOnlineIcon, MenuIcon } from '@heroicons/vue/outline';
 import { ChevronDownIcon } from '@heroicons/vue/solid';
 import Button from './Button.vue';
-import store from '../store';
 import bc from '../blockchain';
+import ts from '../services/TrustContract';
 
-const onDisconnect = () => {
-    if(bc.state.isConnected)
-    {
-        store.state.ts.disconnect().then(() => {
-        })
-    }
-}
 const onClicked = () => {
 
     if(!bc.state.isConnected) {
-        store.state.ts.connect().then(() => {
+        bc.connect().then(() => {
+            ts.init();
         });
     }
 
-    //store.state.trustSvc.refreshBalance();
 }
 
 </script>

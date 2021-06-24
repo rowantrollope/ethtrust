@@ -31,12 +31,12 @@ const connect = async () => {
         state.mainAccount = account[0];
         state.balance = await window.web3.eth.getBalance(state.mainAccount);
         state.networkId = await window.web3.eth.net.getId()
-        
+                
+        state.provider.on('accountsChanged', accountsChanged);
+
         state.isConnected = true;
         
-        console.log("isConnected ", state.isConnected);
-        
-        state.provider.on('accountsChanged', accountsChanged);
+        console.log("Connected to BlockChain")        
     }
 }
 

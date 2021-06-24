@@ -69,7 +69,7 @@
                                         </div>
 
                                         <div class="fieldblock text-lg">
-                                            <EthInput :balance="store.state.ts.getEthBalance(5)" v-model="trust.etherAmount">
+                                            <EthInput :balance="bc.etherBalance" v-model="trust.etherAmount">
                                                 Deposit Amount:
                                             </EthInput>
                                         </div>
@@ -99,7 +99,8 @@ import { ref, watch, computed, onUpdated, defineProps, defineEmit } from 'vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XIcon, ExclamationIcon } from '@heroicons/vue/outline'
 import { Calendar, DatePicker } from 'v-calendar';
-import { toEther, toDate } from '../libs/helpers'
+import { toEther, toDate } from '../services/helpers'
+import bc from '../blockchain';
 
 import store from '../store';
 import Button from './Button.vue';
@@ -133,7 +134,6 @@ const onCancel = () => { open.value = false; emit('cancel'); };
 
 const updated = onUpdated(() => { 
     maturityDate.value = toDate(props.trust.maturityDate); 
-    console.log("onUpdated(): ", maturityDate.value);
 });
 
 </script>

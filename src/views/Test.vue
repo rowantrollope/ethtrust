@@ -12,7 +12,10 @@
         <Button @click="showItem" class="btn btn-primary transition rounded-md p-2 text-white duration-500 ease-in-out bg-blue-600 hover:bg-red-600 transform hover:-translate-y-1 hover:scale-110 ...">
             {{ bc.state.isConnected ? "Connected" : "Connect" }}
         </Button>
-
+        <Button @click="testCall" class="ml-5 btn btn-primary transition rounded-md p-2 text-white duration-500 ease-in-out bg-blue-600 hover:bg-red-600 transform hover:-translate-y-1 hover:scale-110 ...">
+            Test Call
+        </Button>
+        {{ exchange.name.value }}
         <div v-if="showBCInfo" class="flex flex-col text-xl space-y-2 mt-5 border-2 p-3">
             <div class="text-3xl">Blockchain info</div>
             <div> Account: {{ bc.state.mainAccount }} </div>
@@ -33,12 +36,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
 import store from '../store'
 import Button from '../components/Button';
 import ToastNotification from '../components/Toast';
 import bc from '../blockchain'
-import currencyExchange from '../libs/currencyExchange';
+import ts from '../services/TrustContract';
+import currencyExchange from '../services/currencyExchange';
 
 const toast = ref({
     title: '',
@@ -46,16 +50,24 @@ const toast = ref({
     open: false,
 });
 
-const exchange = new currencyExchange;
+const exchange = inject('exchange');
 
 const testShow = ref(false);
 
 const showBCInfo = ref(false);
 
+const testCall = async () =>
+{
+    console.log(exchange.exchange.USD);
+}
+
 const showItem = () =>
 {
     showBCInfo.value = true;
-    bc.connect().then(showNotification("Connected", "Connected to blockchain")); 
+    bc.connect().then(() => {
+        showNotification("Connected", "Connected to blockchain");
+        ts.init();
+    }); 
 
 }
 const showNotification = (title, message, timeout=3000) =>
