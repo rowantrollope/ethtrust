@@ -23,7 +23,7 @@
 <script setup="props, {emit}">
 
 import { ref, computed, onMounted } from 'vue';
-import { round } from '../helpers';
+import { round } from '../libs/helpers';
 import store from '../store';
 
 const eth = ref(0);

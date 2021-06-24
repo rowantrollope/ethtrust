@@ -134,10 +134,10 @@ import ConnectButton from './ConnectButton.vue'
             }
     }
     .rotating-always {
-        -webkit-animation: rotating 10s linear infinite;
-        -moz-animation: rotating 10s linear infinite;
-        -ms-animation: rotating 10s linear infinite;
-        -o-animation: rotating 10s linear infinite;
-        animation: rotating 10s linear infinite;
+        -webkit-animation: rotating 30s linear infinite;
+        -moz-animation: rotating 30s linear infinite;
+        -ms-animation: rotating 30s linear infinite;
+        -o-animation: rotating 30s linear infinite;
+        animation: rotating 30s linear infinite;
     }
 </style>

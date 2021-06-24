@@ -14,6 +14,7 @@ import { watch, onMounted } from 'vue'
 import { ref } from 'vue'
 import store from '../store';
 import TrustCardEx from './TrustCardEx';
+import bc from '../blockchain';
 
 const emit = defineEmit(['items-loaded']);
 
@@ -28,19 +29,19 @@ const trusts = ref([]);
     toDate(trust.maturityDate
 */
 
-const changed = watch(() => store.state.ts.mainAccount,
+const changed = watch(() => bc.state.mainAccount,
   (account, prevAccount) => {
     console.log("MainAccountChanged()");
     loadTrusts();
   }
 )
-const connected = watch(() => store.state.ts.isConnected,
+const connected = watch(() => bc.state.isConnected,
   (connected, prevConnected) => {
     if(connected)
         loadTrusts();
   }
 )
-/*
+
 const reload = watch(() => props.reload, 
     (reload, prevReload) => {
         console.log("Reload()");
@@ -48,7 +49,6 @@ const reload = watch(() => props.reload,
         loadTrusts();
     }
 )
-*/
 
 //
 // Event Handlers
@@ -103,7 +103,7 @@ LOAD TRUSTS
 const loadTrusts = async() => {
 
     trusts.value = await store.state.ts.load((trust) => { 
-        return trust.beneficiary.toLowerCase() === store.state.ts.mainAccount.toLowerCase(); } ); 
+        return trust.beneficiary.toLowerCase() === bc.state.mainAccount.toLowerCase(); } ); 
     
     emit('items-loaded', trusts.value.length);
 }

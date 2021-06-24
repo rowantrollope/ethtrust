@@ -181,7 +181,7 @@
 import { ref, watch, computed, onUpdated, defineProps, defineEmit } from 'vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { ExclamationIcon, XIcon } from '@heroicons/vue/outline'
-import { toDate } from '../helpers';
+import { toDate } from '../libs/helpers';
 
 import Button from './Button.vue';
 import { Calendar, DatePicker } from 'v-calendar';

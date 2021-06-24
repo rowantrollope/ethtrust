@@ -7,7 +7,7 @@
     import { ref, onBeforeMount } from 'vue';
     import Nav from './components/Nav.vue'; 
     import Web3 from 'web3';
-    import TrustService from './TrustService.js';
+    import TrustService from './libs/TrustService.js';
     import store from './store';
     
     const init = async () => { 

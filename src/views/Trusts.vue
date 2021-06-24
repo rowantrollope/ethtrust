@@ -1,5 +1,5 @@
 <template>
-    <div v-if="store.state.ts.isConnected">
+    <div v-if="bc.state.isConnected">
         <PageTitle >
             <template v-slot:title> Trust funds created by you</template>
             <template v-slot:buttons>           
@@ -44,8 +44,9 @@ import PageTitle from '../components/PageTitle';
 import TrustList from '../components/TrustList';
 import CreateTrust from '../components/CreateTrust';
 import ConnectBlock from '../components/ConnectBlock';
+import bc from '../blockchain';
 
-import { toWei } from '../helpers'
+import { toWei } from '../libs/helpers'
 
 const selectedTrust = ref([]);
 const displayHelpText = ref(false);
@@ -90,14 +91,14 @@ const onCreate = async () => {
 
 const createTrust = async (trust) => {
     // setup the values
-    const account = store.state.ts.mainAccount;
-    const trustee = store.state.ts.mainAccount;
+    const account = bc.state.mainAccount;
+    const trustee = bc.state.mainAccount;
     const date = trust.maturityDate;
     const amount = toWei(trust.etherAmount.toString(), 'Ether');
     const address = trust.beneficiary;
     const name = trust.name;
 
-    console.log(`CreateTrust: Amount: ${amount}, Account: ${store.state.mainAccount}`);
+    console.log(`CreateTrust: Amount: ${amount}, Account: ${bc.state.mainAccount}`);
     
     await store.state.ts.trustContract.methods.createTrust(address, trustee, name, date)
         .send( {value: amount.toString(), from: account });

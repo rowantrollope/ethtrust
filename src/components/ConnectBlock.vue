@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!store.state.ts.isConnected">
+    <div v-if="!bc.state.isConnected">
         <h1 class="text-4xl mt-10 ml-5 tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
             <span class="block inline">Lets get you started! </span>
         </h1>
@@ -16,10 +16,11 @@
 <script setup>
 import store from '../store';
 import Button from '../components/Button';
+import bc from '../blockchain';
 
 const onConnect = () => {
     console.log("onConnect");
-    if(!store.state.ts.isConnected) {
+    if(!bc.state.isConnected) {
         store.state.ts.connect().then(() => {
             console.log("Connected");
             // Make these variables reactive...         

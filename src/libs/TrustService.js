@@ -1,32 +1,25 @@
-
 import Web3 from 'web3';
-import ref from 'vue';
 import detectEthereumProvider from "@metamask/detect-provider";
-import Trusts from "../build/contracts/Trusts.json";
-import store from "./store";
+import { ref, reactive } from 'vue';
+import Trusts from "../../build/contracts/Trusts.json";
+import bc from "../blockchain";
 import { round, toEther } from "./helpers";
 
-class TrustService {
+export default class TrustService {
 
     data() {
         return {
             reactive: {
-            trustContract: null,
-            isConnected: false,
-            connectionError: false,
-            connectionErrorMessage: "",
-            networkId: 0,
-            chainId: 0,
-            mainAccount: "",
-            balance: 0,
-            exchange: {},
-            provider: {},
-            rememberMe: true,
-            formatter: null,
+                trustContract: null,
+                trustCount: 0,
+                exchange: {},
+                provider: {},
+                rememberMe: true,
+                formatter: null,
             }
         }
     }
-
+    
     constructor() {
     }
     // TODO: Implement
@@ -36,25 +29,25 @@ class TrustService {
     
     // Connect to blockchain and contract
     async connect() {
+        return;
         console.log('connect');
-        this.provider = await detectEthereumProvider();
-
-        if(this.provider) {
-            console.log('this.provider', this.provider);
+        bc.state.provider = await detectEthereumProvider();
+        if(bc.state.provider) {
+            console.log('this.provider', bc.state.provider);
 
             window.web3 = new Web3(window.ethereum);
 
-            await this.provider.request({method: 'eth_requestAccounts'});
+            await bc.state.provider.request({method: 'eth_requestAccounts'});
         
-            this.chainId = await this.provider.request({ method: 'eth_chainId'});
-            const account = await this.provider.request({ method: 'eth_accounts'});
+            bc.state.chainId = await bc.state.provider.request({ method: 'eth_chainId'});
+            const account = await bc.state.provider.request({ method: 'eth_accounts'});
             // console.log("returned", this.chainId, account[0]);
             // Store the connection data, balance, etc
-            this.mainAccount = account[0];
-            this.balance = await window.web3.eth.getBalance(this.mainAccount);
-            this.networkId = await window.web3.eth.net.getId()
+            bc.state.mainAccount = account[0];
+            bc.state.balance = await window.web3.eth.getBalance(bc.state.mainAccount);
+            bc.state.networkId = await window.web3.eth.net.getId()
             
-            const networkData = Trusts.networks[this.networkId]
+            const networkData = Trusts.networks[bc.state.networkId]
 
             if(networkData) {
                 try {
@@ -63,30 +56,21 @@ class TrustService {
                 } catch(err) {
                     console.error("Error Connecting to trustContract: ", err);
                     console.error(this.trustContract, this.trustCount);
-                    this.connectionErrorMessage = err;
-                    this.connectionError = true;
-                    this.isConnected = false;
+                    bc.state.connectionErrorMessage = err;
+                    bc.state.connectionError = true;
+                    bc.state.isConnected = false;
                     return;
                 }
 
             }
-            this.isConnected = true;
- 
-            console.log("isConnected ", this.isConnected);
+            bc.state.isConnected = true;
+            
+            console.log("isConnected ", bc.state.isConnected);
 
-            this.provider.on('accountsChanged', this.handleAccountsChanged);
+            bc.state.provider.on('accountsChanged', this.handleAccountsChanged);
         }
     }
     async init() {
-
-        // Connect to BC
-        // TODO : Drop cookie
-        this.rememberMe = true;
-        if(this.rememberMe)
-        {
-            console.log("init()")
-            this.connect();
-        }
         // LOAD ETH-USD 
         const response = await fetch("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,BTC,EUR");
         const data = await response.json();
@@ -102,7 +86,7 @@ class TrustService {
 
     async load(callback) {
 
-        if(!this.isConnected)
+        if(!bc.state.isConnected)
             return;
             
         let newtrusts = [];
@@ -125,14 +109,16 @@ class TrustService {
         if (accounts.length === 0) {
             // MetaMask is locked or the user has not connected any accounts
             console.log('Please connect to MetaMask.');
-        } else if (accounts[0] !== this.mainAccount) {
+            bc.state.isConnected = false;
+            bc.state.mainAccount = accounts[0];
+        } else if (accounts[0] !== bc.state.mainAccount) {
             console.log("handleAccountsChanged()", accounts[0])
-            this.mainAccount = accounts[0];
+            bc.state.mainAccount = accounts[0];
             // Do any other work!
         }            
     }
     ETH2USD(eth) {
-        if(!this.isConnected)
+        if(!bc.state.isConnected)
             return;
         if(!this.exchange) 
             return;
@@ -140,7 +126,7 @@ class TrustService {
         return this.exchange.USD * toEther(eth);
     }
     ETH2USDString(eth) {
-        if(!this.isConnected) return;
+        if(!bc.state.isConnected) return;
 
         if(!this.formatter)
         {
@@ -154,9 +140,9 @@ class TrustService {
         return this.formatter.format(this.ETH2USD(eth));
     }
     getEthBalance(_length) { 
-        if(!this.isConnected) return;
+        if(!bc.state.isConnected) return;
 
-        let bal = window.web3.utils.fromWei(this.balance, 'Ether');
+        let bal = window.web3.utils.fromWei(bc.state.balance, 'Ether');
         
         if(_length)
             return round(bal);
@@ -165,11 +151,11 @@ class TrustService {
     
     }
     async refreshBalance() {
-        if(!this.isConnected) return;
+        if(!bc.state.isConnected) return;
 
-        this.balance = await window.web3.eth.getBalance(this.mainAccount);
+        bc.state.balance = await window.web3.eth.getBalance(bc.state.mainAccount);
     }
         
 }
 
-export default TrustService;
+

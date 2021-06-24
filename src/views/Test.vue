@@ -1,13 +1,34 @@
 <template>
-    <div class="m-5">
+    <div class="m-5 ">
+
         <div class="text-6xl font-black leading-tight ">
-            Your trust funds: <br/>
+            Test Console:
         </div>
         <ToastNotification :open="toast.open">
             <template v-slot:title>{{toast.title}}</template>
             <template v-slot:message>{{toast.message}}</template>
         </ToastNotification>
-        <Button class="btn btn-primary" @click="showNotification('Test', 'Test Message')">Show Notification</Button>
+                
+        <Button @click="showItem" class="btn btn-primary transition rounded-md p-2 text-white duration-500 ease-in-out bg-blue-600 hover:bg-red-600 transform hover:-translate-y-1 hover:scale-110 ...">
+            {{ bc.state.isConnected ? "Connected" : "Connect" }}
+        </Button>
+
+        <div v-if="showBCInfo" class="flex flex-col text-xl space-y-2 mt-5 border-2 p-3">
+            <div class="text-3xl">Blockchain info</div>
+            <div> Account: {{ bc.state.mainAccount }} </div>
+            <div> Balance: {{ bc.state.balance }} </div>
+            <div> isConnected: {{ bc.state.isConnected }} </div>
+            <div> connectionError: {{ bc.state.connectionError }} </div>
+            <div> errorMessage: {{ bc.state.connectionErrorMessage }} </div>
+            <div> networkId: {{ bc.state.networkId }} </div>
+            <div> chainId: {{ bc.state.chainId }} </div>
+            <div> etherBalance: {{ bc.etherBalance.value }} </div>
+            <div> etherBalanceRounded: {{ $filters.round(bc.etherBalance.value) }} </div>
+            <div> ether Balance in USD: {{ exchange.eth2usd(bc.etherBalance.value) }} </div>
+            <div> ether Balance in USD Formatted: {{ exchange.eth2usdFormatted(bc.etherBalance.value) }} </div>
+            <div> ETH 2 USD Exhange Rate: {{ exchange.exchange.USD }} </div>
+<!-- -->
+        </div>
     </div>
 </template>
 
@@ -16,6 +37,8 @@ import { ref } from 'vue';
 import store from '../store'
 import Button from '../components/Button';
 import ToastNotification from '../components/Toast';
+import bc from '../blockchain'
+import currencyExchange from '../libs/currencyExchange';
 
 const toast = ref({
     title: '',
@@ -23,6 +46,18 @@ const toast = ref({
     open: false,
 });
 
+const exchange = new currencyExchange;
+
+const testShow = ref(false);
+
+const showBCInfo = ref(false);
+
+const showItem = () =>
+{
+    showBCInfo.value = true;
+    bc.connect().then(showNotification("Connected", "Connected to blockchain")); 
+
+}
 const showNotification = (title, message, timeout=3000) =>
 {
     toast.value.title = title;
@@ -34,48 +69,4 @@ const showNotification = (title, message, timeout=3000) =>
 </script>
 
 <style scoped>
-    .rotating {
-        transition: transform 1s ease-in-out;
-    }
-    .rotating:hover {
-        transform: rotateZ(360deg);
-    }
-    @keyframes rotating {
-        from
-            {
-            transform: rotate(0deg);
-            -o-transform: rotate(0deg);
-            -ms-transform: rotate(0deg);
-            -moz-transform: rotate(0deg);
-            -webkit-transform: rotate(0deg);
-            }
-        to
-            {
-            transform: rotate(360deg);
-            -o-transform: rotate(360deg);
-            -ms-transform: rotate(360deg);
-            -moz-transform: rotate(360deg);
-            -webkit-transform: rotate(360deg);
-            }
-    }
-    @-webkit-keyframes rotating {
-        from
-            {
-            transform: rotate(0deg);
-            -webkit-transform: rotate(0deg);
-            }
-        to
-            {
-            transform: rotate(360deg);
-            -webkit-transform: rotate(360deg);
-            }
-    }
-    .rotating-always {
-        -webkit-animation: rotating 10s linear infinite;
-        -moz-animation: rotating 10s linear infinite;
-        -ms-animation: rotating 10s linear infinite;
-        -o-animation: rotating 10s linear infinite;
-        animation: rotating 10s linear infinite;
-    }
-
 </style>

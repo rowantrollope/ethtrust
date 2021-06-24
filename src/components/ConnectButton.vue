@@ -3,7 +3,7 @@
     <!-- Profile dropdown -->
     <Menu as="div" class="menu">
         <div>
-            <MenuButton v-if="store.state.ts.isConnected" class="h-8 menu-button" @click="onClicked()">
+            <MenuButton v-if="bc.state.isConnected" class="h-8 menu-button" @click="onClicked()">
                 <blockies class="-ml-5 ring-4 ring-white rounded-full" :opts="{
                 seed: store.state.mainAccount, // seed used to generate icon data, default: random
                 color: 'green', // to manually specify the icon color, default: random
@@ -16,24 +16,24 @@
                 <span class="status-text">Connected</span>
                 <ChevronDownIcon class="text-black -ml-1 h-6 w-6" aria-hidden="true" />
             </MenuButton>
-            <MenuButton v-else-if="store.state.ts.connectionError" class="menu-button-warning" @click="onClicked()">
+            <MenuButton v-else-if="bc.state.connectionError" class="menu-button-warning" @click="onClicked()">
                 <StatusOnlineIcon class="status-icon-warning" aria-hidden="true" />
                 <span class="status-text">Not Connected </span>
             </MenuButton>
-            <MenuButton v-else-if="!store.state.ts.isConnected" class="menu-button-connect" v-on:click.prevent="onClicked()">
+            <MenuButton v-else-if="!bc.state.isConnected" class="menu-button-connect" v-on:click.prevent="onClicked()">
                 <StatusOnlineIcon class="status-icon-connect" aria-hidden="true" />
                 <span class="status-text-connect">Start</span>
             </MenuButton>
 
         </div>
         <transition enter-active-class="transition ease-out duration-200" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
-            <MenuItems v-if="store.state.ts.isConnected" class="menu-items">
+            <MenuItems v-if="bc.state.isConnected" class="menu-items">
                 <div class="flex-col vertical space-y-5">
                     <p class="flex text-xl border text-green-500 border-green-500 p-2 rounded-md ">
                         Successfully connected to the Blockchain
                     </p>
                     <p class="flex inline-block">
-                        Account: &nbsp; <b> {{ store.state.ts.mainAccount }} </b>
+                        Account: &nbsp; <b> {{ bc.state.mainAccount }} </b>
                     </p>
                     <p class="flex">
                         Balance: &nbsp; <b> {{ store.state.ts.getEthBalance(5) }} ETH </b>
@@ -51,10 +51,10 @@
                     Failed to connect to the Blockchain
                 </p>
                 <p>
-                    Error Message: {{ store.state.ts.connectionErrorMessage }}
+                    Error Message: {{ bc.state.connectionErrorMessage }}
                 </p>
                 <p class="flex inline-block">
-                    Account: &nbsp; <b> {{ store.state.ts.mainAccount }} </b>
+                    Account: &nbsp; <b> {{ bc.state.mainAccount }} </b>
                 </p>
                 <div class="text-right">
                 <Button class="btn btn-primary" @click="onClicked()">Try Again</Button>
@@ -74,9 +74,10 @@ import { StatusOnlineIcon, MenuIcon } from '@heroicons/vue/outline';
 import { ChevronDownIcon } from '@heroicons/vue/solid';
 import Button from './Button.vue';
 import store from '../store';
+import bc from '../blockchain';
 
 const onDisconnect = () => {
-    if(store.state.ts.isConnected)
+    if(bc.state.isConnected)
     {
         store.state.ts.disconnect().then(() => {
         })
@@ -84,7 +85,7 @@ const onDisconnect = () => {
 }
 const onClicked = () => {
 
-    if(!store.state.ts.isConnected) {
+    if(!bc.state.isConnected) {
         store.state.ts.connect().then(() => {
         });
     }
@@ -129,6 +130,6 @@ const onClicked = () => {
         @apply text-white text-lg ml-1 mr-2 ;
     }
     .status-text {
-        @apply text-black ml-1 mr-2 ;
+        @apply text-black font-light ml-1 mr-2 ;
     }
 </style>

@@ -16,6 +16,6 @@
 
 <style>
     .title {
-        @apply text-xl font-sans font-light text-black;
+        @apply ml-2 text-xl font-sans font-light text-black;
     }
 </style>

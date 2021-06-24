@@ -16,7 +16,6 @@
 import { defineProps, computed } from 'vue'
 import { ref } from 'vue'
 import { ChevronRightIcon } from '@heroicons/vue/outline'
-import store from '../store';
 
 const props = defineProps({
     trust: Object,

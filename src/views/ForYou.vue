@@ -1,5 +1,5 @@
 <template>
-    <div v-if="store.state.ts.isConnected">
+    <div v-if="bc.state.isConnected">
         <div v-if="!displayHelpText" class="text-5xl font-black leading-tight ml-5 mr-5 mt-1 mb-4">
             Your trust funds: <br/>
         </div>
@@ -25,6 +25,7 @@ import store from '../store';
 import PageTitle from '../components/PageTitle';
 import ForYouList from '../components/ForYouList';
 import ConnectBlock from '../components/ConnectBlock';
+import bc from '../blockchain';
 
 const displayHelpText = ref(false);
 

@@ -3,6 +3,7 @@
     <!--
         This is the primary list
     -->
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <TrustCard v-for="trust in trusts" :key="trust.ID" :trust="trust" @click="onSelectItem(trust)"/>
     </div>
@@ -22,14 +23,15 @@
 
 <script setup="props, {emit}">
 
-import { defineProps, watch, onMounted } from 'vue'
-import { ref } from 'vue'
+import { ref, toRefs, defineProps, watch, onMounted } from 'vue'
 
 import store from '../store';
 import EditTrust from './EditTrust';
 import TrustCard from './TrustCard';
 import Button from './Button';
 import ToastNotification from './Toast';
+import bc from '../blockchain';
+import ts from '../libs/TrustService';
 
 const toast = ref({
     title: '',
@@ -45,7 +47,7 @@ const showToast = (title, message, timeout=3000) =>
     setTimeout(() => { toast.value.open = false }, timeout);
 }
 
-import { toWei,  } from '../helpers'
+import { toWei,  } from '../libs/helpers'
 
 const props = defineProps({
     reload: Boolean,
@@ -55,23 +57,27 @@ const emit = defineEmit(['items-loaded']);
 
 const trusts = ref([]);
 
-const changed = watch(() => store.state.ts.mainAccount,
+const changed = watch(() => bc.state.mainAccount,
   (account, prevAccount) => {
+    console.log("WATCHER FIRED mainAccount");
     console.log("MainAccountChanges()", account);
     loadTrusts();
-  }
+  }, { deep: true }
 )
 
 const reload = watch(() => props.reload,
   (val, prevVal) => {
+    console.log("WATCHER FIRED reload");
     if(val)
         loadTrusts();
     props.reload = false;
   }
 )
 
-const connected = watch(() => store.state.ts.isConnected,
+
+const connected = watch(() => bc.state.isConnected,
   (connected, prevConnected) => {
+    console.log("WATCHER FIRED isConnected");
     if(connected)
         loadTrusts();
   }
@@ -123,11 +129,11 @@ const onDeposit = (amount) => {
 }  
 const deposit = async (trust, _amount) => {
     // setup the values
-    const account = store.state.ts.mainAccount;
+    const account = bc.state.mainAccount;
     const key = trust.key;
     const amount = toWei(_amount);
 
-    console.log(`deposit() ${trust.key}: ${amount}, Account: ${store.state.mainAccount}`);
+    console.log(`deposit() ${trust.key}: ${amount}, Account: ${bc.state.mainAccount}`);
    
     await store.state.ts.trustContract.methods.depositTrust(key)
         .send( {value: amount.toString(), from: account });
@@ -136,11 +142,11 @@ const deposit = async (trust, _amount) => {
 }
 const withdraw = async (trust, _amount) => {
     // setup the values
-    const account = store.state.ts.mainAccount;
+    const account = bc.state.mainAccount;
     const key = trust.key;
     const amount = toWei(_amount);
 
-    console.log(`withdraw() ${trust.key}: ${amount}, Account: ${store.state.ts.mainAccount}`);
+    console.log(`withdraw() ${trust.key}: ${amount}, Account: ${bc.state.mainAccount}`);
    
     await store.state.ts.trustContract.methods.withdraw(key, amount)
         .send( { from: account });
@@ -155,7 +161,7 @@ const onCancelEdit = () => {
 const updateTrust = async (trust) => {
     
     // setup the values
-    const account = store.state.ts.mainAccount;
+    const account = bc.state.mainAccount;
     const date = trust.maturityDate;
     const beneficiary = trust.beneficiary;
     const name = trust.name;
@@ -169,8 +175,8 @@ const updateTrust = async (trust) => {
 
 const deleteTrust = async (trust) => {
     console.log("Delete Trust " + trust.key);
-    await store.state.ts.trustContract.methods.withdrawAll(trust.key).send( { from: store.state.ts.mainAccount } );
-    await store.state.ts.trustContract.methods.deleteTrust(trust.key).send( { from: store.state.ts.mainAccount } );
+    await store.state.ts.trustContract.methods.withdrawAll(trust.key).send( { from: bc.state.mainAccount } );
+    await store.state.ts.trustContract.methods.deleteTrust(trust.key).send( { from: bc.state.mainAccount } );
     await loadTrusts().then( () => { showToast('Success', 'Trust Deleted'); } );
 }
 
@@ -180,11 +186,10 @@ LOAD TRUSTS
 
 */
 const loadTrusts = async() => {
-    
     trusts.value = [];
 
     trusts.value = await store.state.ts.load((trust) => { 
-        return trust.creator.toLowerCase() === store.state.ts.mainAccount.toLowerCase(); } ); 
+        return trust.creator.toLowerCase() === bc.state.mainAccount.toLowerCase(); } ); 
     
     console.log(trusts.value.length);
 
