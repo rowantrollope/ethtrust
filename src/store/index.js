@@ -1,5 +1,10 @@
+/*
+    Store.js
+
+    App-wide variables
+
+*/
 import { reactive } from 'vue'
-import TrustContract from '../services/TrustContract'
 
 const state = reactive({
 })

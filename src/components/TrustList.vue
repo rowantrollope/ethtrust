@@ -1,11 +1,23 @@
+<!--
+    This is the primary list for "Manage trusts"
+-->
 <template>
+    <div v-if="!trusts.length">
+        <h1 class="text-3xl mt-10 ml-5 tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+            <span class="block inline">Lets make your first Trust </span>
+            <div class="flex items-center space-x-5 mt-10 ml-10 ">
+                <span class="block text-3xl sm:text-3xl md:text-5xl text-indigo-600">Click </span>
+                <Button class="btn-rounded text-3xl sm:text-3xl md:text-5xl btn-primary" @click="$emit('create-clicked')">Create New</Button>
+                <span class="block text-3xl sm:text-3xl md:text-5xl text-indigo-600">to begin</span>
+            </div>
+        </h1>
+    </div>
 
-    <!--
-        This is the primary list
-    -->
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div v-else-if="trusts.length" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <TrustCard v-for="trust in trusts" :key="trust.ID" :trust="trust" @click="onSelectItem(trust)"/>
+        <div class="create-new-card hover:border-white p-20 hover:shadow-lg text-gray-300  hover:text-indigo-500" @click="$emit('create-clicked')">
+            <div class="flex-shrink rounded-lg text-center text-xl "> Create New Trust</div>
+        </div>
     </div>
 
     <!-- 
@@ -22,15 +34,14 @@
 </template>
 
 <script setup="props, {emit}">
+import { ref, defineProps, computed, watch, onMounted, defineEmit } from 'vue'
 
-import { ref, toRefs, defineProps, watch, onMounted } from 'vue'
-
-import store from '../store';
+import Button from './Button';
 import EditTrust from './EditTrust';
 import TrustCard from './TrustCard';
-import Button from './Button';
 import ToastNotification from './Toast';
-import bc from '../blockchain';
+import { toWei,  } from '../services/helpers'
+import bc from '../services/Blockchain';
 import ts from '../services/TrustContract';
 
 const toast = ref({
@@ -38,6 +49,10 @@ const toast = ref({
     message: '',
     open: false,
 });
+
+defineEmit(['create-clicked']);
+
+const trusts = computed(() => { return ts.state.trusts.filter(trust => trust.creator.toLowerCase() === bc.state.mainAccount.toLowerCase()) } );
 
 const showToast = (title, message, timeout=3000) =>
 {
@@ -47,41 +62,6 @@ const showToast = (title, message, timeout=3000) =>
     setTimeout(() => { toast.value.open = false }, timeout);
 }
 
-import { toWei,  } from '../services/helpers'
-
-const props = defineProps({
-    reload: Boolean,
-});
-
-const emit = defineEmit(['items-loaded']);
-
-const trusts = ref([]);
-
-const changed = watch(() => bc.state.mainAccount,
-  (account, prevAccount) => {
-    console.log("WATCHER FIRED mainAccount");
-    console.log("MainAccountChanges()", account);
-    loadTrusts();
-  }, { deep: true }
-)
-
-const reload = watch(() => props.reload,
-  (val, prevVal) => {
-    console.log("WATCHER FIRED reload");
-    if(val)
-        loadTrusts();
-    props.reload = false;
-  }
-)
-
-
-const connected = watch(() => bc.state.isConnected,
-  (connected, prevConnected) => {
-    console.log("WATCHER FIRED isConnected");
-    if(connected)
-        loadTrusts();
-  }
-)
 //
 // Edit handlers
 //
@@ -92,115 +72,77 @@ let trustBeforeEdit;
 
 const onSelectItem = (trust) => { 
     trustBeforeEdit = Object.assign({}, trust); 
-    openEditDialog(trustBeforeEdit);
+    selectedTrust.value = trustBeforeEdit; 
+    isEditDialogVisible.value = true; 
 }
 
-const openEditDialog = (trust) => {  
-    selectedTrust.value = trust; 
-    isEditDialogVisible.value = true; 
-};
 const closeEditDialog = () => { isEditDialogVisible.value = false; };
 
 const onSave = async () => { 
     closeEditDialog(); 
 
-    await updateTrust(selectedTrust.value);
-    await loadTrusts();
-    showToast("Success", "Trust Successfully Updated");
-}
-const onDelete = () => { 
-    console.log("Selected Trust to delete", selectedTrust.value);
-    deleteTrust(selectedTrust.value);
-    closeEditDialog(); 
+    await ts.updateTrust(selectedTrust.value.key, 
+                         selectedTrust.value.beneficiary, 
+                         selectedTrust.value.name,
+                         selectedTrust.value.maturityDate, 
+                         bc.state.mainAccount).then( () => {
+    
+        showToast('Success', 'Trust Updated Successfully');    
+    })
+
 }
 
-const onWithdraw = (amount) => {
+const onDelete = async () => { 
+    closeEditDialog();
+
+    console.log("Selected Trust to delete", selectedTrust.value);
+    
+    await ts.deleteTrust(selectedTrust.value.key).then( () => {
+        
+        showToast('Success', 'Trust Deleted'); 
+    });
+}
+
+const onWithdraw = async (amount) => {
+    closeEditDialog();
+
     console.log("Request to withdraw", selectedTrust.value);
     
-    withdraw(selectedTrust.value, amount);
-    closeEditDialog();
-}
-
-const onDeposit = (amount) => {
-
-    deposit(selectedTrust.value, amount);
-    closeEditDialog();
-    
-}  
-const deposit = async (trust, _amount) => {
-    // setup the values
-    const account = bc.state.mainAccount;
-    const key = trust.key;
-    const amount = toWei(_amount);
-    
-    await ts.deposit(key, amount, account);
-    
-    await loadTrusts().then( () => {
-        showToast('Success', `Deposited ${amount} successfully`);    
-    });  
-}
-const withdraw = async (trust, _amount) => {
-    // setup the values
-    const account = bc.state.mainAccount;
-    const key = trust.key;
-    const amount = toWei(_amount);
-
-    await ts.withdraw(key, amount, account);
-
-    await loadTrusts().then( () => {
+    await ts.withdraw(selectedTrust.value.key, toWei(amount), bc.state.mainAccount).then ( () => {
+        
         showToast('Success', `Withdrew ${amount} successfully`);    
-    })
+    });
+
 }
+
+const onDeposit = async (amount) => {
+    closeEditDialog();    
+
+    await ts.deposit(selectedTrust.value.key, toWei(amount), bc.state.mainAccount).then( () => {    
+        
+        showToast('Success', `Deposited ${amount} successfully`);
+    });
+
+}  
+
 const onCancelEdit = () => { 
     Object.assign(selectedTrust.value, trustBeforeEdit); 
     closeEditDialog(); 
 };
 
-const updateTrust = async (trust) => {
-    
-    // setup the values
-    const account = bc.state.mainAccount;
-    const date = trust.maturityDate;
-    const beneficiary = trust.beneficiary;
-    const name = trust.name;
-
-    await ts.updateTrust(trust.key, beneficiary, name, date, account);
-    
-    await loadTrusts().then( () => {
-        showToast('Success', 'Trust Updated Successfully');    
-    })
-}
-
-const deleteTrust = async (trust) => {
-    console.log("Delete Trust " + trust.key);
-    
-    await ts.deleteTrust(trust.key);
-
-    await loadTrusts().then( () => { 
-        showToast('Success', 'Trust Deleted'); 
-    });
-}
-
-/*
-
-LOAD TRUSTS 
-
-*/
-const loadTrusts = async() => {
-    trusts.value = [];
-
-    trusts.value = await ts.load((trust) => { 
-        return trust.creator.toLowerCase() === bc.state.mainAccount.toLowerCase(); } ); 
-    
-    emit('items-loaded', trusts.value ? trusts.value.length : 0);
-}
-
-const mounted = onMounted(() => {
-    loadTrusts();
-    return;
-})
-
 </script>
 
 <style scoped>
+    .create-new-card {
+        @apply cursor-pointer 
+            border-2 
+            border-dashed
+            border-gray-300 
+            rounded-lg 
+            h-52 
+            hover:text-indigo-500
+            hover:shadow-md
+            hover:border-white
+            hover:bg-gray-100
+    };
 </style>

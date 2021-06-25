@@ -4,12 +4,12 @@
 </template>
 
 <script setup>
-    import { ref, provide, onBeforeMount } from 'vue';
+    import { provide } from 'vue';
+
     import Nav from './components/Nav.vue'; 
-    import Web3 from 'web3';
-    import ts from './services/TrustContract';
-    import bc from './blockchain';
     import currencyExchange from './services/currencyExchange';
+    import ts from './services/TrustContract';
+    import bc from './services/Blockchain';
 
     const exchange = new currencyExchange;
 

@@ -1,3 +1,12 @@
+<!--
+    Dialog used to edit a trust settings.
+
+    Handles edit of editable settings, deposit, withdraw, delete.  All actions taken through caller
+    upon emitted events.
+
+    Caller passes in a temporary trust object which can be discarded on Cancel/Close
+
+--> 
 <template>
     <TransitionRoot as="template" :show="open">
         <Dialog as="div" static class="fixed z-50 inset-0 overflow-y-auto" @close="open = false" :open="open">
@@ -181,13 +190,13 @@
 import { ref, watch, computed, onUpdated, defineProps, defineEmit } from 'vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { ExclamationIcon, XIcon } from '@heroicons/vue/outline'
-import { toDate } from '../services/helpers';
-import bc from '../blockchain';
+import { Calendar, DatePicker } from 'v-calendar';
 
 import Button from './Button.vue';
-import { Calendar, DatePicker } from 'v-calendar';
-import store from '../store';
 import EthInput from './EthInput';
+
+import { toDate } from '../services/helpers';
+import bc from '../services/Blockchain';
 
 const props = defineProps({
     trust: Object,

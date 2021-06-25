@@ -1,3 +1,14 @@
+/*
+
+    Blockchain.js
+
+    Component used to connect to blockchain.
+
+    Responds to updates as user chooses new wallets.
+
+    TODO: Add support for non-Metamask wallets
+
+*/
 import { reactive, computed } from 'vue'
 import Web3 from 'web3';
 import detectEthereumProvider from "@metamask/detect-provider";
@@ -13,12 +24,11 @@ const state = reactive({
     provider: {},
 }) 
 
-// Connect to blockchain and contract
 const connect = async () => {
-    console.log('connect');
+    //console.log('connect');
     state.provider = await detectEthereumProvider();
     if(state.provider) {
-        console.log('state.provider', state.provider);
+        //console.log('state.provider', state.provider);
 
         window.web3 = new Web3(window.ethereum);
 
@@ -36,7 +46,7 @@ const connect = async () => {
 
         state.isConnected = true;
         
-        console.log("Connected to BlockChain")        
+        console.log(`Blockchain.connect() - SUCCESS Connecting. mainAccount: ${state.mainAccount}`)        
     }
 }
 

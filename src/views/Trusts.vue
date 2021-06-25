@@ -1,7 +1,25 @@
+<!--
+    The primary list of trusts "Manage Trusts" (this is designed for the creators )
+-->
 <template>
-    <div v-if="bc.state.isConnected && ts.state.isConnected">
+    <!-- 
+        When empty, display some helpful text
+    --> 
+    <ConnectBlock/>
+    <div v-if="displayHelpText">
+        <h1 class="text-3xl mt-10 ml-5 tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+            <span class="block inline">Lets make your first Trust </span>
+            <div class="flex items-center space-x-5 mt-10 ml-10 ">
+                <span class="block text-3xl sm:text-3xl md:text-5xl text-indigo-600">Click </span>
+                <Button class="btn-rounded text-3xl sm:text-3xl md:text-5xl btn-primary" @click="onCreateNew">Create New</Button>
+                <span class="block text-3xl sm:text-3xl md:text-5xl text-indigo-600">to begin</span>
+            </div>
+        </h1>
+    </div>
+
+    <div v-else-if="bc.state.isConnected && ts.state.isConnected">
         <PageTitle >
-            <template v-slot:title> Trust funds created by you</template>
+            <template v-slot:title>Create & Manage Trusts</template>
             <template v-slot:buttons>           
                 <Button class="btn-rounded btn-primary" :onClick="onCreateNew">
                     Create New
@@ -9,22 +27,8 @@
             </template>
         </PageTitle>
         <div class="px-5">
-            <TrustList :reload="reload" @items-loaded="onItemsLoaded"></TrustList>
+            <TrustList @create-clicked="onCreateNew"></TrustList>
         </div>
-    </div>
-    <!-- 
-        When empty, display some helpful text
-    --> 
-    <ConnectBlock/>
-    <div v-if="displayHelpText">
-        <h1 class="text-4xl mt-10 ml-5 tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-            <span class="block inline">Lets make your first Trust </span>
-            <div class="flex items-center space-x-5 mt-10">
-                <span class="block text-indigo-600">Click </span>
-                <Button class="btn-rounded btn-primary" @click="onCreateNew">Create New</Button>
-                <span class="block text-indigo-600">to begin</span>
-            </div>
-        </h1>
     </div>
 
     <!-- 
@@ -38,13 +42,13 @@
 
 <script setup>
 import { ref } from 'vue';
-import store from '../store';
+
 import Button from '../components/Button';
 import PageTitle from '../components/PageTitle';
 import TrustList from '../components/TrustList';
 import CreateTrust from '../components/CreateTrust';
 import ConnectBlock from '../components/ConnectBlock';
-import bc from '../blockchain';
+import bc from '../services/Blockchain';
 import ts from '../services/TrustContract';
 
 import { toWei } from '../services/helpers'
@@ -87,7 +91,7 @@ const onCreate = async () => {
     console.log("Creating Trust for etherAmount: ", selectedTrust.value.etherAmount);
     
     await createTrust(selectedTrust.value).then(() => {
-        reload.value = true;
+        ts.load();
     });
     
     // Tell the TrustList to reload after we create a new trust

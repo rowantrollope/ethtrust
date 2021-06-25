@@ -1,3 +1,9 @@
+<!--
+    
+    The Ceate Trust dialog.  This dialog is invoked to create a trust.  The dialog itself sets up the values
+    but doesn't do the creation.  That is handled by the caller.
+
+-->
 <template>
     <TransitionRoot as="template" :show="open">
         <Dialog as="div" static class="fixed z-50 inset-0 overflow-y-auto" @close="open = false" :open="open">
@@ -99,12 +105,11 @@ import { ref, watch, computed, onUpdated, defineProps, defineEmit } from 'vue'
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XIcon, ExclamationIcon } from '@heroicons/vue/outline'
 import { Calendar, DatePicker } from 'v-calendar';
-import { toEther, toDate } from '../services/helpers'
-import bc from '../blockchain';
 
-import store from '../store';
 import Button from './Button.vue';
 import EthInput from './EthInput.vue';
+import { toEther, toDate } from '../services/helpers'
+import bc from '../services/Blockchain';
 
 const props = defineProps({
     trust: Object,

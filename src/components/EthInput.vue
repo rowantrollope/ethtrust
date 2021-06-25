@@ -1,3 +1,6 @@
+<!--
+    Input field which displays an ETH logo, and shows a USD (or other) conversion in real-time
+--> 
 <template>
     <div class="flex items-center space-x-2">                    
         <div class="text-right">
@@ -21,11 +24,10 @@
 </template>
 
 <script setup="props, {emit}">
-
 import { ref, computed, inject } from 'vue';
-import { round } from '../services/helpers';
-import store from '../store';
+
 import currencyExchange from '../services/currencyExchange';
+import { round } from '../services/helpers';
 
 const exchange = inject('exchange');
 const eth = ref(0);
@@ -33,7 +35,6 @@ const eth2usd = computed(() => round(props.modelValue * exchange.exchange.USD));
 
 const props = defineProps({
     modelValue: Number,
-    balance: Number,
 });
 
 </script>

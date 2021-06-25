@@ -1,3 +1,6 @@
+<!--
+    Individual "Card" display of a single TRUST 
+--> 
 <template>
     <div class="card">
         <div class="relative text-center">
@@ -44,21 +47,20 @@
 </template>
 
 <script setup="props, {emit}">
-
 import { defineProps, inject, computed } from 'vue'
-import { ref } from 'vue'
 import { ChevronRightIcon } from '@heroicons/vue/outline'
-import bc from '../blockchain';
-import currencyExchange from '../services/currencyExchange';
+
+import { toEther } from '../services/helpers';
 
 const exchange = inject('exchange');
 
 const props = defineProps({
     trust: Object,
 });
+
 const emit = defineEmit(['onclick']);
 
-const eth2usd = computed(() => exchange.eth2usdFormatted(props.trust.etherAmount));
+const eth2usd = computed(() => exchange.eth2usdFormatted(toEther(props.trust.etherAmount)));
 
 </script>
 
@@ -71,10 +73,11 @@ const eth2usd = computed(() => exchange.eth2usdFormatted(props.trust.etherAmount
         items-center 
         rounded-r-2xl
         shadow-sm 
-        border-2
+        border
         border-gray-300 
         bg-white 
-        hover:border-black
+        cursor-pointer
+        hover:border-black;
     }
     .eth-amount {
         @apply -ml-2 text-black text-base flex items-center;

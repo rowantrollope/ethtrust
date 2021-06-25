@@ -1,4 +1,6 @@
-<!-- This example requires Tailwind CSS v2.0+ -->
+<!--
+    Navigation bar 
+--> 
 <template>
     <Disclosure as="nav" class="bg-gray-900" v-slot="{ open }">
         <div class="mx-auto pl-2 pr-3">
@@ -68,6 +70,7 @@
 <script setup>
 import { Disclosure, DisclosureButton, DisclosurePanel, TransitionRoot } from '@headlessui/vue'
 import { MenuIcon, XIcon } from '@heroicons/vue/outline'
+
 import ConnectButton from './ConnectButton.vue'
 
 </script>

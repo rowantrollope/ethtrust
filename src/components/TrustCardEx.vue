@@ -1,5 +1,8 @@
+<!--
+    Card display for a single trust, shown by the ForYou list.
+--> 
 <template>
-    <div class="card justify-center">
+    <div class="card justify-center cursor-pointer">
         <div class="card-inner">
             <img alt="cert" width="400" src="../assets/money.png">
             <div class="cert-name text-2xl leading-tight">{{ trust.name }}</div>            
@@ -12,14 +15,13 @@
 </template>
 
 <script setup="props, {emit}">
-
-import { defineProps, computed } from 'vue'
-import { ref } from 'vue'
+import { defineEmit, defineProps } from 'vue'
 import { ChevronRightIcon } from '@heroicons/vue/outline'
 
 const props = defineProps({
     trust: Object,
 });
+
 const emit = defineEmit(['onclick']);
 
 </script>
@@ -33,7 +35,9 @@ const emit = defineEmit(['onclick']);
         text-center
         bg-white 
         border
+        rounded-md
         border-gray-300
+        bg-gray-100
         shadow-sm
         hover:border-black
         focus-within:ring-2 

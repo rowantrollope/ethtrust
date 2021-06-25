@@ -1,15 +1,30 @@
+/*
+    TrustContract.js
+
+    Component used to connect to Trust solidity SmartContract.
+
+*/
 import Web3 from 'web3';
-import { ref, reactive } from 'vue';
+import { reactive, watch } from 'vue';
 import Trusts from "../../build/contracts/Trusts.json";
-import bc from "../blockchain";
+import bc from "./Blockchain";
 
 let trustContract = {};
+
+const connected = watch(() => bc.state.isConnected,
+    (connected, prevConnected) => {
+        console.log("WATCHER FIRED isConnected");
+        if(connected)
+            load();
+    }
+)
 
 const state = reactive({
     isConnected: false,
     connectionError: false,
     connectionErrorMessage: "",
     trustContract: 0,
+    trusts: [],
 }) 
 
     // Connect to blockchain and contract
@@ -30,8 +45,10 @@ const init = async () => {
             
             return;
         }
-        console.log("ts.init - Connected");
+        //console.log("ts.init - Connected");
         state.isConnected = true;
+        
+        await load();
     }
 }
 
@@ -48,7 +65,7 @@ const load = async (callback) => {
     let newtrusts = [];
 
     state.trustCount = await trustContract.methods.getTrustCount().call();
-    console.log("trustCount", state.trustCount);
+    console.log(`TrustContract.load() - SUCCESS Loading. getTrustCount: ${state.trustCount}`);
     // Load trusts
     for (var i = 0; i <= state.trustCount - 1; i++) {
         const key = await trustContract.methods.getTrustAtIndex(i).call();
@@ -56,8 +73,9 @@ const load = async (callback) => {
         if(!callback || callback(trust))
             newtrusts = [...newtrusts, trust];
     }
-    console.log("trusts", newtrusts);
-    
+    //console.log("trusts", newtrusts);
+    state.trusts = newtrusts;
+
     return newtrusts;
 }
 
@@ -67,14 +85,15 @@ const createTrust = async (address, trustee, name, date, amount, account) => {
     
     await trustContract.methods.createTrust(address, trustee, name, date)
         .send( {value: amount.toString(), from: account });
-   
+    
+    await load();
 }
       
 const deleteTrust = async (key) => {
     
     await trustContract.methods.withdrawAll(key).send( { from: bc.state.mainAccount } );
     await trustContract.methods.deleteTrust(key).send( { from: bc.state.mainAccount } );
-
+    await load();
 }
 
 const updateTrust = async (key, beneficiary, name, date, account) => {
@@ -84,6 +103,7 @@ const updateTrust = async (key, beneficiary, name, date, account) => {
     await trustContract.methods.updateTrust(key, beneficiary, name, date)
         .send( { from: account });
 
+    await load();
 }
 
 const withdraw = async (key, amount, account) => {
@@ -92,6 +112,8 @@ const withdraw = async (key, amount, account) => {
    
     await trustContract.methods.withdraw(key, amount)
         .send( { from: account });
+
+    await load();
 }
 
 const deposit = async (key, amount, account) => {
@@ -100,8 +122,10 @@ const deposit = async (key, amount, account) => {
 
     await trustContract.methods.depositTrust(key)
         .send( {value: amount.toString(), from: account });
-
+    
+    await load();
 }
+
 export default {
     state,
     init,

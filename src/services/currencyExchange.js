@@ -1,3 +1,10 @@
+/*
+
+    CurrencyExchange.js
+
+    Component used to translate currencies, uses cryptocompare
+
+*/
 import { ref } from 'vue';
 import { round, toEther } from './helpers';
 
@@ -14,7 +21,7 @@ export default class currencyExchange {
 
     constructor() {
         this.name.value = "CurrencyExchange";
-        console.log(this.name + "Constructor");
+        //console.log(this.name + "Constructor");
         this.init();
     }
     
@@ -23,7 +30,7 @@ export default class currencyExchange {
         const response = await fetch("https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,BTC,EUR");
         const data = await response.json();
         this.exchange = data;   
-        console.log(this.exchange); 
+        //console.log(this.exchange); 
 
         // Create our number formatter.
         this.formatter = new Intl.NumberFormat(undefined, {

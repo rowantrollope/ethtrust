@@ -1,6 +1,9 @@
+<!--
+    TESTING goes here
+-->
 <template>
-    <div class="m-5 ">
 
+    <div class="m-5 ">
         <div class="text-6xl font-black leading-tight ">
             Test Console:
         </div>
@@ -32,17 +35,21 @@
             <div> ETH 2 USD Exhange Rate: {{ exchange.exchange.USD }} </div>
 <!-- -->
         </div>
+        <div v-if="bc.state.isConnected && ts.state.isConnected" class="grid mt-20 grid-cols-1 lg:grid-cols-2 gap-4">
+            <TrustCard v-for="trust in myTrusts" :key="trust.ID" :trust="trust" @click="onSelectItem(trust)"/>
+        </div>
+
     </div>
 </template>
 
 <script setup>
-import { ref, inject } from 'vue';
-import store from '../store'
+import { ref, inject, computed } from 'vue';
+
 import Button from '../components/Button';
+import TrustCard from '../components/TrustCard';
 import ToastNotification from '../components/Toast';
-import bc from '../blockchain'
+import bc from '../services/Blockchain';
 import ts from '../services/TrustContract';
-import currencyExchange from '../services/currencyExchange';
 
 const toast = ref({
     title: '',
@@ -56,14 +63,19 @@ const testShow = ref(false);
 
 const showBCInfo = ref(false);
 
+const myTrusts = computed(() => { return ts.state.trusts.filter(trust => true) } );
+
 const testCall = async () =>
 {
-    console.log(exchange.exchange.USD);
+    let filtered = ts.state.trusts.filter(trust => { 
+        console.log(trust.creator, bc.state.mainAccount); 
+        return trust.creator == bc.state.mainAccount });
+    console.log(filtered);
+    console.log(ts.state.trusts.length);
 }
 
 const showItem = () =>
 {
-    showBCInfo.value = true;
     bc.connect().then(() => {
         showNotification("Connected", "Connected to blockchain");
         ts.init();

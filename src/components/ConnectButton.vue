@@ -1,6 +1,11 @@
-<!-- This example requires Tailwind CSS v2.0+ -->
+<!--
+    Handles the "Connected" button to display the state of the connection to the blockchain / metamask
+    
+    Currently handles three states: Connect, Connected and Error.
+    
+    TODO: Add animation for transitions.    
+-->
 <template>
-    <!-- Profile dropdown -->
     <Menu as="div" class="menu">
         <div>
             <MenuButton v-if="bc.state.isConnected && ts.state.isConnected" class="h-8 menu-button" @click="onClicked()">
@@ -66,14 +71,13 @@
 </template>
 
 <script setup>
-import { ref, onActivated, onMounted, onUpdated } from 'vue'
-import blockies from './Identicon.vue'
-
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { StatusOnlineIcon, MenuIcon } from '@heroicons/vue/outline';
 import { ChevronDownIcon } from '@heroicons/vue/solid';
+import blockies from './Identicon.vue'
+
 import Button from './Button.vue';
-import bc from '../blockchain';
+import bc from '../services/Blockchain';
 import ts from '../services/TrustContract';
 
 const onClicked = () => {
@@ -93,13 +97,13 @@ const onClicked = () => {
         @apply ml-3 relative;
     }
     .menu-button {
-        @apply bg-white px-2 inline-block items-center flex text-sm font-medium rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white;
+        @apply bg-white px-2 inline-block items-center flex text-sm font-medium rounded-full hover:bg-indigo-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white;
     }
     .menu-button-connect {
-        @apply bg-blue-500 px-2 inline-block items-center flex rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white;
+        @apply bg-blue-500 px-2 inline-block items-center flex rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:bg-indigo-300 focus:ring-white;
     }
     .menu-button-warning {
-        @apply bg-red-500 px-2 inline-block items-center flex rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white;
+        @apply bg-red-500 px-2 inline-block items-center flex rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:bg-red-200 focus:ring-white;
     }
     .menu-items {
         @apply origin-top-right absolute px-5 pt-5 pb-5 right-0 mt-2 rounded-2xl shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50;
@@ -123,6 +127,6 @@ const onClicked = () => {
         @apply text-white text-lg ml-1 mr-2 ;
     }
     .status-text {
-        @apply text-black font-light ml-1 mr-2 ;
+        @apply text-black focus:text-white font-light ml-2 mr-2 ;
     }
 </style>

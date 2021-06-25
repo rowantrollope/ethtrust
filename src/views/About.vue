@@ -1,3 +1,6 @@
+<!--
+    About the Trusted app, FAQ, etc
+-->
 <template>
     <div class="relative bg-white mt-10 ml-10 overflow-hidden">
         <div class="max-w-7xl mx-auto">

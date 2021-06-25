@@ -5,9 +5,6 @@
 </template>
   
 <script setup>
-
-//import { ref, computed, defineProps, reactive } from 'vue';
-
 </script>
 
 <style scoped>
@@ -21,7 +18,7 @@
         @apply text-white bg-black hover:bg-gray-500;
     }
     .btn-primary {
-        @apply text-white bg-blue-500 hover:bg-blue-400 focus:ring-blue-500 ;
+        @apply text-white bg-indigo-600 hover:bg-indigo-400 focus:ring-blue-500 ;
     }
     .btn-primary-outline {
         @apply text-blue-700 hover:bg-blue-400 focus:ring-blue-500 ;
