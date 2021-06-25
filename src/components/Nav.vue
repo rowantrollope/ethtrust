@@ -25,11 +25,11 @@
                         <router-link class="router-link" tag="li" to="/">
                             Home
                         </router-link>
-                        <router-link class="router-link" tag="li" to="/ForYou">
-                             Trusts for you
-                        </router-link>
                         <router-link class="router-link" tag="li" to="/Trusts">
                             Manage Trusts
+                        </router-link>
+                        <router-link class="router-link" tag="li" to="/ForYou">
+                             Trusts for you
                         </router-link>
                         <router-link class="router-link" tag="li" to="/About">
                             About
@@ -50,11 +50,11 @@
                 <router-link class="mobile-router-link" tag="li" to="/">
                     Home
                 </router-link>
-                <router-link class="mobile-router-link" tag="li" to="/ForYou">
-                        Trusts for you
-                </router-link>
                 <router-link class="mobile-router-link" tag="li" to="/Trusts">
                     Manage Trusts
+                </router-link>
+                <router-link class="mobile-router-link" tag="li" to="/ForYou">
+                    Trusts for you
                 </router-link>
                 <router-link class="mobile-router-link" tag="li" to="/About">
                     About

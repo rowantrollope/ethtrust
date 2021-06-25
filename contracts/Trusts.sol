@@ -59,10 +59,10 @@ contract Trusts {
 
         emit LogCreateTrust(msg.sender, t.key, t.name);
         
-        return t.key;
+        return (t.key);
     }
 
-    function updateTrust(bytes32 key, address _beneficiary, 
+    function updateTrust(bytes32 key, address _beneficiary, address _trustee,
                          string memory _name,  
                          uint _maturityDate) public {
         
@@ -73,6 +73,7 @@ contract Trusts {
 
         t.name = _name;
         t.beneficiary = _beneficiary;
+        t.trustee = _trustee;
         t.maturityDate = _maturityDate;
 
         emit LogUpdateTrust(msg.sender, t.key, t.name);
@@ -122,6 +123,7 @@ contract Trusts {
     function getTrust(bytes32 _key) public view returns( bytes32 key,
                                                         string memory name, 
                                                         address beneficiary,
+                                                        address trustee,
                                                         uint etherAmount,
                                                         address creator,
                                                         uint createdDate,
@@ -131,7 +133,7 @@ contract Trusts {
         
         Trust storage t = trusts[_key];
 
-        return(t.key, t.name, t.beneficiary, t.etherAmount, t.creator, t.createdDate, t.maturityDate);
+        return(t.key, t.name, t.beneficiary, t.trustee, t.etherAmount, t.creator, t.createdDate, t.maturityDate);
     }
     
     function getTrustCount() public view returns(uint count) {

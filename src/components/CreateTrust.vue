@@ -34,7 +34,7 @@
                                             <label for="trust_name" class="label-text">Name</label>
                                             <input type="text" 
                                                 v-model="trust.name" 
-                                                placeholder="Enter Trust name"
+                                                placeholder="(Optional) Enter a name for this trust"
                                                 name="trust_name" 
                                                 id="trust_name" 
                                                 autocomplete="trust-name" 
@@ -44,7 +44,7 @@
                                         <div class="fieldblock">
                                             <label for="beneficiary_account" class="label-text">Beneficiary</label>
                                             <input type="text" 
-                                                    placeholder="Enter account number for beneficiary"
+                                                    placeholder="(Required) Enter account number for beneficiary"
                                                     v-model="trust.beneficiary" 
                                                     name="beneficiary_account" 
                                                     id="beneficiary_account" 
@@ -127,8 +127,6 @@ const inputValue = ref(Date)
 const ethAmount = computed(() => toEther(trust.etherAmount));
 
 // Methods
-watch(open, (val) => { console.log("Open changed: ", val); });
-
 const onCreate = () => { 
     props.trust.maturityDate = new Date(maturityDate.value) / 1000; 
     open.value = false; 

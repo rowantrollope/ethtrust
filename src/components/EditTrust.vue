@@ -42,7 +42,7 @@
                             </div>
                             <div class="mt-5 hidden">
                                 <label for="tabs" class="sr-only">Select a tab</label>
-                                <select id="tabs" name="tabs" class="block w-full focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md">
+                                <select id="tabs" name="tabs" class="block w-full focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md hover:border-indigo-500">
                                     <option v-for="(tab, index) in tabs" :key="index"  :selected="activeTab===index">{{ tab }}</option>
                                 </select>
                             </div>
@@ -85,7 +85,7 @@
                                                 <label for="trustee_account" class="label-text">Trustee Account</label>
                                             </div>
                                             <div class="col-span-8">
-                                                <input type="text" v-model="trust.beneficiary" name="trustee_account" id="trustee_account" autocomplete="trustee_account" class="input-field" />
+                                                <input type="text" v-model="trust.trustee" name="trustee_account" id="trustee_account" autocomplete="trustee_account" class="input-field" />
                                             </div>
 
                                             <div class="col-span-4 justify-self-end pt-2 ">
@@ -234,7 +234,6 @@ const onDeposit = () => { open.value = false; emit('deposit', ethDeposit.value);
 
 const updated = onUpdated(() => { 
     maturityDate.value = toDate(props.trust.maturityDate); 
-    console.log("onUpdated(): ", maturityDate.value);
 });
 
 </script>
@@ -266,10 +265,10 @@ const updated = onUpdated(() => {
     @apply px-3 py-2 font-medium text-lg rounded-md;
 }
 .selected-tab {
-    @apply text-white bg-black rounded-md;
+    @apply cursor-pointer text-white bg-black rounded-md;
 }
 .unselected-tab {
-    @apply text-gray-900 hover:text-gray-700;
+    @apply cursor-pointer border border-white text-gray-700 hover:text-indigo-500 hover:border-indigo-500;
 }
 .tab-content {
     @apply border-gray-500 text-xl mt-2 border rounded-md pt-6 px-6 pb-2;

@@ -80,6 +80,7 @@ const onCreateNew = () => {
         etherAmount: 1,
         maturityDate: new Date() / 1000,
         beneficiary: '',
+        trustee: ''
     };
 
     openCreateDialog(t);    
@@ -89,24 +90,24 @@ const onCreate = async () => {
     closeCreateDialog(); 
     
     console.log("Creating Trust for etherAmount: ", selectedTrust.value.etherAmount);
+
+    // Since trustee is not required, set to beneficiary if its left empty
+    if(selectedTrust.value.trustee == '')
+        selectedTrust.value.trustee = selectedTrust.value.beneficiary;
     
-    await createTrust(selectedTrust.value).then(() => {
-        ts.load();
-    });
+    await ts.createTrust(
+        selectedTrust.value.beneficiary, 
+        selectedTrust.value.trustee,
+        selectedTrust.value.name, 
+        selectedTrust.value.maturityDate, 
+        toWei(selectedTrust.value.etherAmount.toString(), 'Ether'), 
+        bc.state.mainAccount);
     
-    // Tell the TrustList to reload after we create a new trust
+// Tell the TrustList to reload after we create a new trust
 }
 
 const createTrust = async (trust) => {
     // setup the values
-    const account = bc.state.mainAccount;
-    const trustee = bc.state.mainAccount;
-    const date = trust.maturityDate;
-    const amount = toWei(trust.etherAmount.toString(), 'Ether');
-    const address = trust.beneficiary;
-    const name = trust.name;
-
-    await ts.createTrust(address, trustee, name, date, amount, account);
 
 }
 const onCancelCreate = () => { 

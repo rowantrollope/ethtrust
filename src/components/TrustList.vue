@@ -14,7 +14,9 @@
     </div>
 
     <div v-else-if="trusts.length" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <TrustCard v-for="trust in trusts" :key="trust.ID" :trust="trust" @click="onSelectItem(trust)"/>
+        <transition-group name="list">
+            <TrustCard v-for="trust in trusts" :key="trust.key" :trust="trust" @click="onSelectItem(trust)"/>
+        </transition-group>
         <div class="create-new-card hover:border-white p-20 hover:shadow-lg text-gray-300  hover:text-indigo-500" @click="$emit('create-clicked')">
             <div class="flex-shrink rounded-lg text-center text-xl "> Create New Trust</div>
         </div>
@@ -82,7 +84,8 @@ const onSave = async () => {
     closeEditDialog(); 
 
     await ts.updateTrust(selectedTrust.value.key, 
-                         selectedTrust.value.beneficiary, 
+                         selectedTrust.value.beneficiary,
+                         selectedTrust.value.trustee,
                          selectedTrust.value.name,
                          selectedTrust.value.maturityDate, 
                          bc.state.mainAccount).then( () => {
@@ -95,8 +98,8 @@ const onSave = async () => {
 const onDelete = async () => { 
     closeEditDialog();
 
-    console.log("Selected Trust to delete", selectedTrust.value);
-    
+    console.log("OnDelete", selectedTrust.value.key);
+
     await ts.deleteTrust(selectedTrust.value.key).then( () => {
         
         showToast('Success', 'Trust Deleted'); 
@@ -106,7 +109,7 @@ const onDelete = async () => {
 const onWithdraw = async (amount) => {
     closeEditDialog();
 
-    console.log("Request to withdraw", selectedTrust.value);
+    console.log("onWithdraw", selectedTrust.value);
     
     await ts.withdraw(selectedTrust.value.key, toWei(amount), bc.state.mainAccount).then ( () => {
         
@@ -139,10 +142,40 @@ const onCancelEdit = () => {
             border-dashed
             border-gray-300 
             rounded-lg 
-            h-52 
+            h-48 
             hover:text-indigo-500
             hover:shadow-md
             hover:border-white
             hover:bg-gray-100
     };
+
+
+.list-enter-active,
+.list-leave-active,
+.list-move {
+  transition: 500ms cubic-bezier(0.59, 0.12, 0.34, 0.95);
+  transition-property: opacity, transform;
+}
+
+.list-enter-from {
+  opacity: 0;
+  transform: translateX(50px) scaleY(0.5);
+}
+
+.list-enter-to {
+  opacity: 1;
+  transform: translateX(0) scaleY(1);
+}
+
+.list-leave-active {
+  position: absolute;
+}
+
+.list-leave-to {
+  opacity: 0;
+  transform: scaleY(0);
+  transform-origin: center top;
+}
+
+
 </style>

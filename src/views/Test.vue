@@ -3,12 +3,8 @@
 -->
 <template>
 
-    <div class="m-5 ">
-        <transition name="highlight" mode="out-in">
-            <div :key="text" class="text-6xl font-black leading-tight ">
-                {{text}}
-            </div>
-        </transition>
+    <div class="m-5 " v-if="false">
+
         <ToastNotification :open="toast.open">
             <template v-slot:title>{{toast.title}}</template>
             <template v-slot:message>{{toast.message}}</template>
@@ -96,23 +92,5 @@ const showNotification = (title, message, timeout=3000) =>
 </script>
 
 <style scoped>
-.highlight-enter-from {
-    @apply bg-yellow-300;
-    transition: all 3s;
-}
-.highlight-enter-to {
-   @apply bg-white;
-   transition: all 3s
-}
-.slide-fade-enter-active {
-  transition: all .3s ease;
-}
-.slide-fade-leave-active {
-  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active for <2.1.8 */ {
-  transform: translateX(10px);
-  opacity: 0;
-}
+
 </style>

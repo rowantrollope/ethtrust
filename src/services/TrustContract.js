@@ -28,7 +28,7 @@ const state = reactive({
     trusts: [],
 }) 
 
-    // Connect to blockchain and contract
+// Connect to blockchain and contract
 const init = async () => {
     const networkData = Trusts.networks[bc.state.networkId]
 
@@ -48,7 +48,42 @@ const init = async () => {
         }
         //console.log("ts.init - Connected");
         state.isConnected = true;
-        
+    
+        //
+        // Register Solidity Event Handlers
+        //
+        trustContract.events.LogCreateTrust({ fromBlock: 'latest' }, 
+            async (error, event) => {
+                let key = event.returnValues.key;
+                console.log("EVENT: LogCreateTrust: ", key, event);
+                
+                const idx = state.trusts.findIndex(trust => trust.key === key);
+                
+                // Sometimes this callback is being called twice - only insert once
+                if(idx != -1)
+                {
+                    console.error("LogCreateTrust Called Twice", event);
+                    return;
+                }
+
+                let trust = await trustContract.methods.getTrust(event.returnValues.key).call();
+                state.trusts.push(trust);
+        }
+        );
+        trustContract.events.LogRemoveTrust({ fromBlock: 'latest' }, 
+            async (error, event) => {
+                let key = event.returnValues.key;
+                console.log("EVENT: LogRemoveTrust: ", key);
+                
+                const idx = state.trusts.findIndex(trust => trust.key === key);
+                if(idx != -1)
+                    state.trusts.splice(idx, 1)
+                else
+                    console.error("Can't Find Trust");
+
+            }
+        );
+    
         await load();
     }
 }
@@ -86,22 +121,20 @@ const createTrust = async (address, trustee, name, date, amount, account) => {
     
     await trustContract.methods.createTrust(address, trustee, name, date)
         .send( {value: amount.toString(), from: account });
-    
-    await load();
+
 }
       
 const deleteTrust = async (key) => {
     
     await trustContract.methods.withdrawAll(key).send( { from: bc.state.mainAccount } );
     await trustContract.methods.deleteTrust(key).send( { from: bc.state.mainAccount } );
-    await load();
 }
 
-const updateTrust = async (key, beneficiary, name, date, account) => {
+const updateTrust = async (key, beneficiary, trustee, name, date, account) => {
 
     console.log(`UpdateTrust ${key}: Name: ${name}, Date: ${date}, Beneficiary: ${beneficiary}, Account: ${account}`);
     
-    await trustContract.methods.updateTrust(key, beneficiary, name, date)
+    await trustContract.methods.updateTrust(key, beneficiary, trustee, name, date)
         .send( { from: account });
     
     await _updateTrust(key);

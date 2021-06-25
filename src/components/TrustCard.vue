@@ -11,7 +11,7 @@
                 </div>            
             </transition>
             <transition name="pop" mode="out-in">
-                <div class="cert-eth text-xl text-white font-bold " :key="props.trust.etherAmount">
+                <div class="cert-eth text-xl text-white font-bold " :key="trust.etherAmount">
                     {{ $filters.toEther(props.trust.etherAmount) }}
                 </div>    
             </transition>
@@ -23,27 +23,27 @@
                 <span class="eth-amount"> 
                     <svg xmlns="http://www.w3.org/2000/svg" height="32" width="32" preserveAspectRatio="xMidYMid" viewBox="-38.39985 -104.22675 332.7987 625.3605"><path fill="#343434" d="M125.166 285.168l2.795 2.79 127.962-75.638L127.961 0l-2.795 9.5z"/><path fill="#8C8C8C" d="M127.962 287.959V0L0 212.32z"/><path fill="#3C3C3B" d="M126.386 412.306l1.575 4.6L256 236.587l-128.038 75.6-1.575 1.92z"/><path fill="#8C8C8C" d="M0 236.585l127.962 180.32v-104.72z"/><path fill="#141414" d="M127.961 154.159v133.799l127.96-75.637z"/><path fill="#393939" d="M127.96 154.159L0 212.32l127.96 75.637z"/></svg>
                     <transition name="highlight" mode="out-in">
-                        <span :key="props.trust.etherAmount">{{ $filters.toEther(props.trust.etherAmount) }} ETH </span>
+                        <span :key="props.trust.etherAmount">{{ $filters.toEther(trust.etherAmount) }} ETH </span>
                     </transition>
                     <span class="text-base text-gray-400">
                         &nbsp;({{ eth2usd }})
                     </span>
                 </span>
                 <div class="flex mt-5 space-x-2">
-                    <div class="text-right flex-shrink">
+                    <div class="text-right flex-shrink whitespace-nowrap">
                         <p>Available on: </p>
                         <p>Beneficiary: </p>
                         <p>Trustee: </p>
                         <p>Created by: </p>
                         <p>Trust Key: </p>
                     </div>
-                        <div class="flex-grow">
+                        <div class="flex-grow whitespace-nowrap">
                         <transition-group name="highlight" mode="out-in">                
-                            <p :key="props.trust.maturityDate">{{ $filters.toDate(props.trust.maturityDate) }}</p>
-                            <p :key="props.trust.beneficiary">{{ $filters.shortenAddress(props.trust.beneficiary) }}</p>
-                            <p :key="props.trust.beneficiary">{{ $filters.shortenAddress(props.trust.beneficiary) }}</p>
-                            <p :key="props.trust.creator">{{ $filters.shortenAddress(props.trust.creator) }}</p>
-                            <p :key="props.trust.key">{{ $filters.shortenAddress(props.trust.key) }}</p>
+                            <p :key="trust.maturityDate">{{ $filters.toDate(trust.maturityDate) }}</p>
+                            <p :key="trust.beneficiary">{{ $filters.shortenAddress(trust.beneficiary) }}</p>
+                            <p :key="trust.trustee">{{ $filters.shortenAddress(trust.trustee) }}</p>
+                            <p :key="trust.creator">{{ $filters.shortenAddress(trust.creator) }}</p>
+                            <p :key="trust.key">{{ $filters.shortenAddress(trust.key) }}</p>
                         </transition-group>
                         </div>
                 </div>
@@ -87,7 +87,7 @@ const eth2usd = computed(() => exchange.eth2usdFormatted(toEther(props.trust.eth
         hover:border-black;
     }
     .eth-amount {
-        @apply -ml-2 text-black text-base flex items-center;
+        @apply -ml-2 text-black text-base flex items-center whitespace-nowrap;
     }
     .cert-name {
             position: absolute;
@@ -133,19 +133,20 @@ const eth2usd = computed(() => exchange.eth2usdFormatted(toEther(props.trust.eth
     }
     .highlight-enter-from {
         @apply bg-yellow-300;
-        transition: all 5s;
+        transition: all 3s;
     }
     .highlight-enter-to {
         @apply bg-white;
-        transition: all 5s
-    }
-    .pop-enter-from {
-        @apply text-yellow-300 text-4xl;
         transition: all 3s;
     }
-    .pop-enter-to {
-        @apply text-white text-xl;
-        transition: all 3s
+    .pop-enter-from {
+        @apply text-yellow-300;
+        transform: scale(2) translate(-50%, -50%);
+        transition: ease-out 0.8s;
     }
-
+    .pop-enter-to {
+        @apply text-white;
+        transform: scale(1) translate(-50%, -50%);
+        transition: ease-out 0.8s
+    }
 </style>
