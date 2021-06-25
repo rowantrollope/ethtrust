@@ -8,6 +8,7 @@ import Web3 from 'web3';
 import { reactive, watch } from 'vue';
 import Trusts from "../../build/contracts/Trusts.json";
 import bc from "./Blockchain";
+import TrustCard from '../components/TrustCard.vue';
 
 let trustContract = {};
 
@@ -102,8 +103,17 @@ const updateTrust = async (key, beneficiary, name, date, account) => {
     
     await trustContract.methods.updateTrust(key, beneficiary, name, date)
         .send( { from: account });
+    
+    await _updateTrust(key);
+}
 
-    await load();
+const _updateTrust = async (key) => {
+
+    let index = state.trusts.findIndex(trust => trust.key === key);
+
+    let newTrust = await trustContract.methods.getTrust(key).call();
+    
+    state.trusts[index] = newTrust;
 }
 
 const withdraw = async (key, amount, account) => {
@@ -113,7 +123,7 @@ const withdraw = async (key, amount, account) => {
     await trustContract.methods.withdraw(key, amount)
         .send( { from: account });
 
-    await load();
+    await _updateTrust(key);
 }
 
 const deposit = async (key, amount, account) => {
@@ -123,7 +133,7 @@ const deposit = async (key, amount, account) => {
     await trustContract.methods.depositTrust(key)
         .send( {value: amount.toString(), from: account });
     
-    await load();
+    await _updateTrust(key);
 }
 
 export default {

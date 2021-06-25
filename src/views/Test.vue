@@ -4,9 +4,11 @@
 <template>
 
     <div class="m-5 ">
-        <div class="text-6xl font-black leading-tight ">
-            Test Console:
-        </div>
+        <transition name="highlight" mode="out-in">
+            <div :key="text" class="text-6xl font-black leading-tight ">
+                {{text}}
+            </div>
+        </transition>
         <ToastNotification :open="toast.open">
             <template v-slot:title>{{toast.title}}</template>
             <template v-slot:message>{{toast.message}}</template>
@@ -56,6 +58,9 @@ const toast = ref({
     message: '',
     open: false,
 });
+const cs=ref('');
+const text=ref("Starter");
+const open=ref(true);
 
 const exchange = inject('exchange');
 
@@ -67,11 +72,9 @@ const myTrusts = computed(() => { return ts.state.trusts.filter(trust => true) }
 
 const testCall = async () =>
 {
-    let filtered = ts.state.trusts.filter(trust => { 
-        console.log(trust.creator, bc.state.mainAccount); 
-        return trust.creator == bc.state.mainAccount });
-    console.log(filtered);
-    console.log(ts.state.trusts.length);
+    text.value=!text.value;
+    //open.value = !open.value;
+    //setTimeout(() => { open.value = !open.value; }, 1000);
 }
 
 const showItem = () =>
@@ -93,4 +96,23 @@ const showNotification = (title, message, timeout=3000) =>
 </script>
 
 <style scoped>
+.highlight-enter-from {
+    @apply bg-yellow-300;
+    transition: all 3s;
+}
+.highlight-enter-to {
+   @apply bg-white;
+   transition: all 3s
+}
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active for <2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
 </style>

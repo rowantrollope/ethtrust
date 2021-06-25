@@ -37,7 +37,7 @@ contract Trusts {
 
     function createTrust (address _beneficiary, address _trustee,
                          string memory _name,  
-                         uint _maturityDate) public payable {
+                         uint _maturityDate) public payable returns(bytes32 key) {
         
  
         trustSet.insert(nextKey); // Note that this will fail automatically if the key already exists.
@@ -59,6 +59,7 @@ contract Trusts {
 
         emit LogCreateTrust(msg.sender, t.key, t.name);
         
+        return t.key;
     }
 
     function updateTrust(bytes32 key, address _beneficiary, 
