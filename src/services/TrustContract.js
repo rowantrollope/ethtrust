@@ -52,40 +52,41 @@ const init = async () => {
         //
         // Register Solidity Event Handlers
         //
-        trustContract.events.LogCreateTrust({ fromBlock: 'latest' }, 
-            async (error, event) => {
-                let key = event.returnValues.key;
-                console.log("EVENT: LogCreateTrust: ", key, event);
-                
-                const idx = state.trusts.findIndex(trust => trust.key === key);
-                
-                // Sometimes this callback is being called twice - only insert once
-                if(idx != -1)
-                {
-                    console.error("LogCreateTrust Called Twice", event);
-                    return;
-                }
-
-                let trust = await trustContract.methods.getTrust(event.returnValues.key).call();
-                state.trusts.push(trust);
-        }
-        );
-        trustContract.events.LogRemoveTrust({ fromBlock: 'latest' }, 
-            async (error, event) => {
-                let key = event.returnValues.key;
-                console.log("EVENT: LogRemoveTrust: ", key);
-                
-                const idx = state.trusts.findIndex(trust => trust.key === key);
-                if(idx != -1)
-                    state.trusts.splice(idx, 1)
-                else
-                    console.error("Can't Find Trust");
-
-            }
-        );
+        trustContract.events.LogCreateTrust({ fromBlock: 'latest' }, onCreateTrust);
+        trustContract.events.LogRemoveTrust({ fromBlock: 'latest' }, onRemoveTrust);
     
         await load();
     }
+}
+
+const onRemoveTrust = async (error, event) => {
+    
+    let key = event.returnValues.key;
+    console.log("EVENT: LogRemoveTrust: ", key);
+    
+    const idx = state.trusts.findIndex(trust => trust.key === key);
+    if(idx != -1)
+        state.trusts.splice(idx, 1)
+    else
+        console.error("Can't Find Trust");
+} 
+
+const onCreateTrust = async (error, event) => {
+
+    let key = event.returnValues.key;
+    console.log("EVENT: LogCreateTrust: ", key, event);
+    
+    const idx = state.trusts.findIndex(trust => trust.key === key);
+    
+    // Sometimes this callback is being called twice - only insert once
+    if(idx != -1)
+    {
+        console.error("LogCreateTrust Called Twice", event);
+        return;
+    }
+
+    let trust = await trustContract.methods.getTrust(event.returnValues.key).call();
+    state.trusts.push(trust);
 }
 
 const load = async (callback) => {

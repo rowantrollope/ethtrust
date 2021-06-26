@@ -8,7 +8,7 @@
 <template>
     <Menu as="div" class="menu">
         <div>
-            <MenuButton v-if="bc.state.isConnected && ts.state.isConnected" class="h-9 menu-button" @click="onClicked()">
+            <MenuButton v-if="bc.state.isConnected && ts.state.isConnected" class="h-10 menu-button" @click="onClicked()">
 <!--                <blockies class="-ml-5 ring-4 ring-white rounded-full" :opts="{
                 seed: bc.state.mainAccount, // seed used to generate icon data, default: random
                 color: 'green', // to manually specify the icon color, default: random
@@ -17,7 +17,7 @@
                 scale: 4, // width/height of each block in pixels, default: 4
                 spotcolor: 'yellow' // each pixel has a 13% chance of being of a third color,
                 }" /> -->
-                <jazzicon class="-ml-1 mt-1" :address="bc.state.mainAccount" :diameter="32"/>
+                <jazzicon class="-ml-1 mt-2" :address="bc.state.mainAccount" :diameter="34"/>
 
                 <span class="status-text">Connected</span>
                 <ChevronDownIcon class="text-black -ml-1 h-6 w-6" aria-hidden="true" />

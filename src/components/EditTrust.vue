@@ -115,11 +115,35 @@
                                     </Button>                                                    
                                 </div>                               
                             </div>
+                            <!--
+                                INVEST FUNDS TAB
+                            -->
+                            <div v-show="activeTab===1" class="tab-content">
+                                <p class="text-2xl">Invest funds:</p><br/>
+
+                                <p><b>Note: You can invest the full balance of this trust fund: </b></p><br/>
+                                <p>Maximum Investment: 
+                                    <span class="text-green-500">{{$filters.toEther(trust.etherAmount)}} ETH</span>
+                                </p>
+                                <div class="grid grid-cols-12 mt-4 gap-6 items-center">
+                                    <div class="col-span-12">
+<!--                                        <input type="text" v-model="ethWithdraw" name="ethWithdraw" id="ethWithdraw" autocomplete="ethWithdraw" class="input-field" />
+-->                                        <EthInput v-model="ethInvest">Enter Amount to invest</EthInput>
+                                    </div>
+                                </div>
+
+                                <div class="dialog-footer">
+                                    <Button class="flex-1 btn-white mx-2" :onClick="onCancel" >
+                                        Cancel
+                                    </Button>
+                                    <Button class="flex-1 btn-success" :onClick="onInvest">Invest Funds</Button>
+                                </div>
+                            </div>
 
                             <!--
                                 WITHDRAW FUNDS TAB
                             -->
-                            <div v-show="activeTab===1" class="tab-content">
+                            <div v-show="activeTab===2" class="tab-content">
                                 <p class="text-2xl">Withdraw funds from trust-fund:</p><br/>
 
                                 <p><b>Note: Funds will be returned to the owner of the trust.  Only the trust fund owner may withdraw. </b></p><br/>
@@ -143,7 +167,7 @@
                             <!--
                                 ADD FUNDS TAB
                             -->
-                            <div v-show="activeTab===2" class="tab-content">
+                            <div v-show="activeTab===3" class="tab-content">
                                 <p class="text-2xl">Add funds to trust fund. </p> <br/>
                                 <p><b>Note: Only ETH deposits are supported at this time.</b></p><br/>
                                 <p class="text-xl">Your Wallet Balance: <span class="text-bold text-green-600">{{ bc.etherBalance.value }} ETH</span></p>
@@ -163,7 +187,7 @@
                             <!--
                                 DELETE TRUST TAB
                             -->
-                            <div v-show="activeTab===3" class="tab-content">
+                            <div v-show="activeTab===4" class="tab-content">
                                 <div class="text-2xl">Delete trust fund? </div> <br/>
                                 <div class="text-xl">Trust Fund Balance is <span class="text-bold text-green-600">{{ $filters.toEther(trust.etherAmount) }} ETH</span></div><br/>
                                 <div class="font-bold">Deleting this trust fund will transfer {{ $filters.toEther(trust.etherAmount) }} ETH to address: <br/><br/> </div> 
@@ -205,12 +229,13 @@ const props = defineProps({
 const activeTab = ref(0);
 const tabs = ref([
           "Edit Details",
+          "Invest",
           "Withdraw",
           "Deposit",
           "Delete Trust",
 ]);
 
-const emit = defineEmit(['save', 'cancel', 'delete', 'withdraw', 'deposit']);
+const emit = defineEmit(['save', 'cancel', 'delete', 'withdraw', 'deposit', 'invest']);
 
 // Variables
 const open = ref(true);
@@ -218,6 +243,7 @@ const maturityDate = ref(Date);
 const inputValue = ref(Date)
 const ethWithdraw = ref(0);
 const ethDeposit = ref(0);
+const ethInvest = ref(0);
 
 // Methods
 watch(open, (val) => { console.log("Open changed: ", val); });
