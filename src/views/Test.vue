@@ -3,20 +3,22 @@
 -->
 <template>
 
-    <div class="m-5 " v-if="false">
+    <div class="m-5 " v-if="true">
 
         <ToastNotification :open="toast.open">
             <template v-slot:title>{{toast.title}}</template>
             <template v-slot:message>{{toast.message}}</template>
         </ToastNotification>
-                
         <Button @click="showItem" class="btn btn-primary transition rounded-md p-2 text-white duration-500 ease-in-out bg-blue-600 hover:bg-red-600 transform hover:-translate-y-1 hover:scale-110 ...">
             {{ bc.state.isConnected ? "Connected" : "Connect" }}
         </Button>
-        <Button @click="testCall" class="ml-5 btn btn-primary transition rounded-md p-2 text-white duration-500 ease-in-out bg-blue-600 hover:bg-red-600 transform hover:-translate-y-1 hover:scale-110 ...">
-            Test Call
+        <Button @click="testButton" class="ml-5 btn btn-primary transition rounded-md p-2 text-white duration-500 ease-in-out bg-blue-600 hover:bg-red-600 transform hover:-translate-y-1 hover:scale-110 ...">
+            Test Button
         </Button>
-        {{ exchange.name.value }}
+        <br/>
+        Wallet private key: {{ privateKey }}<br/>
+        Wallet public key: {{ publicKey }}<br/>
+        Wallet Mnemonic: {{ mnemonic }}<br/>
         <div v-if="showBCInfo" class="flex flex-col text-xl space-y-2 mt-5 border-2 p-3">
             <div class="text-3xl">Blockchain info</div>
             <div> Account: {{ bc.state.mainAccount }} </div>
@@ -41,6 +43,9 @@
 </template>
 
 <script setup>
+import Web3 from 'web3';
+import { ethers, Wallet } from "ethers";
+
 import { ref, inject, computed } from 'vue';
 
 import Button from '../components/Button';
@@ -66,11 +71,29 @@ const showBCInfo = ref(false);
 
 const myTrusts = computed(() => { return ts.state.trusts.filter(trust => true) } );
 
-const testCall = async () =>
+const publicKey = ref('');
+const privateKey = ref('');
+const mnemonic = ref('');
+const testButton = async () =>
 {
-    text.value=!text.value;
-    //open.value = !open.value;
-    //setTimeout(() => { open.value = !open.value; }, 1000);
+    // A Web3Provider wraps a standard Web3 provider, which is
+    // what Metamask injects as window.ethereum into each page
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+
+    console.log("Hola")
+
+    let newWallet = Wallet.createRandom();
+
+    mnemonic.value = newWallet.mnemonic.phrase;
+    publicKey.value = newWallet.address;
+    privateKey.value = newWallet.privateKey;
+
+    console.log(newWallet);
+
+    let copyWallet = Wallet.fromMnemonic(mnemonic.value);
+
+    console.log(copyWallet);
+
 }
 
 const showItem = () =>
