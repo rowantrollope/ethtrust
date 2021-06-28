@@ -21,7 +21,7 @@
         @apply text-white bg-indigo-600 hover:bg-indigo-400 focus:ring-blue-500 ;
     }
     .btn-primary-outline {
-        @apply text-blue-700 hover:bg-blue-400 focus:ring-blue-500 ;
+        @apply text-indigo-600 border border-indigo-500 hover:bg-indigo-400 focus:ring-indigo-500 hover:text-white;
     }
     .btn-white {
         @apply text-black border border-gray-300 hover:bg-gray-100 focus:ring-gray-400 ;
@@ -40,6 +40,9 @@
     }
     .btn-gray {
         @apply text-white bg-gray-700 hover:bg-gray-600 focus:ring-gray-600;
+    }
+    .btn-gray-outline {
+        @apply text-black hover:text-white hover:bg-gray-600 focus:ring-gray-600;
     }
     .btn-warning {
         @apply text-black bg-yellow-300 hover:bg-yellow-200 focus:ring-yellow-200;
