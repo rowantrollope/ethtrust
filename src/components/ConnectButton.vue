@@ -8,7 +8,7 @@
 <template>
     <Popover class="relative">
         <PopoverButton v-if="bc.state.isConnected && ts.state.isConnected" class="h-10 popover-button" @click="onClicked()">
-            <jazzicon class="-ml-1 mt-2" :address="bc.state.mainAccount" :diameter="34"/>
+            <jazzicon class="-ml-1 mt-1" :address="bc.state.mainAccount" :diameter="34"/>
             <span class="status-text">Connected</span>
             <ChevronDownIcon class="text-black -ml-1 h-6 w-6" aria-hidden="true" />
         </PopoverButton>

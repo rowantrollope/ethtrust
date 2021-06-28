@@ -2,8 +2,10 @@
     TESTING goes here
 -->
 <template>
-
-    <div class="m-5 " v-if="true">
+    <div class="m-5">
+    <TestComponent/>
+    </div>
+    <div class="m-5 " v-if="false">
 
         <ToastNotification :open="toast.open">
             <template v-slot:title>{{toast.title}}</template>
@@ -35,6 +37,11 @@
             <div> ETH 2 USD Exhange Rate: {{ exchange.exchange.USD }} </div>
 <!-- -->
         </div>
+        Enter 12 word pass-phrase
+        <input type="text" v-model="mnemonicInput" name="mnemonicInput" id="mnemonicInput" autocomplete="mnemonicInput" />
+        <Button class="btn btn-primary" @click="onSearch">Find my trust</Button>
+        Found Your Account: {{ foundAddress }} 
+
         <div v-if="bc.state.isConnected && ts.state.isConnected" class="grid mt-20 grid-cols-1 lg:grid-cols-2 gap-4">
             <TrustCard v-for="trust in myTrusts" :key="trust.ID" :trust="trust" @click="onSelectItem(trust)"/>
         </div>
@@ -51,6 +58,7 @@ import { ref, inject, computed } from 'vue';
 import Button from '../components/Button';
 import TrustCard from '../components/TrustCard';
 import ToastNotification from '../components/Toast';
+import TestComponent from '../components/TestComponent';
 import bc from '../services/Blockchain';
 import ts from '../services/TrustContract';
 
@@ -69,13 +77,20 @@ const testShow = ref(false);
 
 const showBCInfo = ref(false);
 
-const myTrusts = computed(() => { return ts.state.trusts.filter(trust => true) } );
+const myTrusts = computed(() => { return ts.state.trusts.filter(trust => trust.beneficiary === foundAddress.value) } );
 
 const publicKey = ref('');
 const privateKey = ref('');
 const mnemonic = ref('');
-const testButton = async () =>
-{
+const mnemonicInput = ref('');
+let foundAddress = ref('');
+
+const onSearch = () => {
+    console.log(mnemonicInput.value);
+    let foundWallet = Wallet.fromMnemonic(mnemonicInput.value);
+    foundAddress.value = foundWallet.address;
+}
+const testButton = async () => {
     // A Web3Provider wraps a standard Web3 provider, which is
     // what Metamask injects as window.ethereum into each page
     const provider = new ethers.providers.Web3Provider(window.ethereum)
