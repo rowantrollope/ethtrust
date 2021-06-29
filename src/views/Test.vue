@@ -2,10 +2,13 @@
     TESTING goes here
 -->
 <template>
-    <div class="m-5">
-    <TestComponent/>
+    <div v-if="false" class="m-5">
+        <TestComponent/>
     </div>
-    <div class="m-5 " v-if="false">
+    <div class="m-20">
+        <NewTestComp/>
+    </div>
+    <div v-if="false" class="m-5">
 
         <ToastNotification :open="toast.open">
             <template v-slot:title>{{toast.title}}</template>
@@ -59,6 +62,7 @@ import Button from '../components/Button';
 import TrustCard from '../components/TrustCard';
 import ToastNotification from '../components/Toast';
 import TestComponent from '../components/TestComponent';
+import NewTestComp from '../components/NewTestComp';
 import bc from '../services/Blockchain';
 import ts from '../services/TrustContract';
 
