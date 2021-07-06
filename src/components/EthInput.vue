@@ -18,25 +18,27 @@
             />
         </div>
         <div class="text-gray-400">
-            ${{ eth2usd }}
+            {{ eth2usd }}
         </div>
     </div>
 </template>
 
 <script setup="props, {emit}">
-import { ref, computed, inject } from 'vue';
+import { ref, computed, inject, onBeforeMount } from 'vue';
 
 import currencyExchange from '../services/currencyExchange';
 import { round } from '../services/helpers';
 
 const exchange = inject('exchange');
+
 const eth = ref(0);
-const eth2usd = computed(() => round(props.modelValue * exchange.exchange.USD));
+const eth2usd = computed(() => exchange.eth2usdFormatted(props.modelValue));
 
 const props = defineProps({
     modelValue: Number,
 });
-
+const beforeMount = onBeforeMount(() => {
+})
 </script>
 
 <style scoped>

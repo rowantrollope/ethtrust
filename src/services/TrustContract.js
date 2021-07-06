@@ -8,11 +8,10 @@ import Web3 from 'web3';
 import { reactive, watch } from 'vue';
 import Trusts from "../../build/contracts/Trusts.json";
 import bc from "./Blockchain";
-import TrustCard from '../components/TrustCard.vue';
 
 let trustContract = {};
 
-const connected = watch(() => bc.state.isConnected,
+const connected = watch(bc.state.isConnected,
     (connected, prevConnected) => {
         console.log("WATCHER FIRED isConnected");
         if(connected)
@@ -118,10 +117,10 @@ const load = async (callback) => {
 
 const createTrust = async (address, trustee, name, date, amount, account) => {
  
-    console.log(`CreateTrust: Amount: ${amount}, Account: ${bc.state.mainAccount}`);
+    console.log(`CreateTrust: Beneficiary: ${address} Amount: ${amount}, Account: ${account}, Date: ${date}`);
     
     await trustContract.methods.createTrust(address, trustee, name, date)
-        .send( {value: amount.toString(), from: account });
+        .send( {value: amount, from: account });
 
 }
       

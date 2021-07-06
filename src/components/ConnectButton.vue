@@ -21,7 +21,13 @@
             <span class="status-text-connect">Start</span>
         </PopoverButton>
 
-        <transition enter-active-class="transition ease-out duration-400" enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100" leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
+        <transition 
+            enter-active-class="transition transform ease-out duration-300" 
+            enter-from-class=" opacity-0 scale-0" 
+            enter-to-class=" opacity-100 scale-100 " 
+            leave-active-class="transition ease-in duration-100" 
+            leave-from-class="transform scale-y-100 opacity-100" 
+            leave-to-class="transform opacity-0 scale-y-0">
             <PopoverPanel v-if="bc.state.isConnected" class="popover-panel">
                 <div class="flex-col text-left vertical space-y-3">
                     <div class="flex items-center space-y-3 text-xl ">

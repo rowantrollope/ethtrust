@@ -3,7 +3,7 @@
 --> 
 <template>
     <div class="card">
-        <div class="relative text-center">
+        <div class="relative text-center text-black">
             <img alt="cert" width="250" height="200" src="../assets/money.png">
             <transition name="highlight" mode="out-in">
                 <div class="cert-name text-lg font-light leading-tight" :key="trust.name">
@@ -12,7 +12,7 @@
             </transition>
             <transition name="pop" mode="out-in">
                 <div class="cert-eth text-xl text-white font-bold " :key="trust.etherAmount">
-                    {{ $filters.toEther(props.trust.etherAmount) }}
+                    {{ $filters.toEther(trust.etherAmount) }}
                 </div>    
             </transition>
         </div>
@@ -48,13 +48,15 @@
                 </div>
             </div>
         </div>
-        <ChevronRightIcon class="h-8 w-8 text-gray-300" aria-hidden="true" />
+        <ChevronRightIcon class="h-8 w-8" aria-hidden="true" />
     </div>
 </template>
 
 <script setup="props, {emit}">
 import { defineProps, inject, computed } from 'vue'
 import { ChevronRightIcon } from '@heroicons/vue/outline'
+
+import CurrencyExchange from '../services/currencyExchange';
 
 import { toEther } from '../services/helpers';
 
@@ -66,7 +68,7 @@ const props = defineProps({
 
 const emit = defineEmit(['onclick']);
 
-const eth2usd = computed(() => exchange.eth2usdFormatted(toEther(props.trust.etherAmount)));
+const eth2usd = computed(() => exchange.eth2usdFormatted(toEther(props.trust.etherAmount)) );
 
 </script>
 
@@ -83,7 +85,9 @@ const eth2usd = computed(() => exchange.eth2usdFormatted(toEther(props.trust.eth
         border-gray-300 
         bg-white 
         cursor-pointer
-        hover:border-black;
+        hover:border-black
+        text-white
+        hover:text-gray-400;
     }
     .eth-amount {
         @apply -ml-2 text-black text-base flex items-center whitespace-nowrap;

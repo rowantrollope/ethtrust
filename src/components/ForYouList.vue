@@ -9,7 +9,7 @@
         </h1>
     </div>
     <div v-else-if="trusts.length" class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <TrustCardEx v-for="trust in trusts" :key="trust.ID" :trust="trust" @click="onSelectItem(trust)"/>
+        <TrustCardEx v-for="trust in trusts" :selectable="true" :key="trust.ID" :trust="trust" @click="onSelectItem(trust)"/>
     </div>
 </template>
 

@@ -7,9 +7,9 @@
     import { provide } from 'vue';
 
     import Nav from './components/Nav.vue'; 
-    import currencyExchange from './services/currencyExchange';
     import ts from './services/TrustContract';
     import bc from './services/Blockchain';
+    import currencyExchange from './services/currencyExchange';
 
     const exchange = new currencyExchange;
 
@@ -21,9 +21,7 @@
                 ts.init();
             }); 
         }
-        
         provide('exchange', exchange);
-
     }
     init();
 

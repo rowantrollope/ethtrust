@@ -2,14 +2,14 @@
     Card display for a single trust, shown by the ForYou list.
 --> 
 <template>
-    <div class="card justify-center cursor-pointer">
+    <div :class="selectable ? card-selectable : ''" class="card justify-center cursor-pointer">
         <div class="card-inner">
             <img alt="cert" width="400" src="../assets/money.png">
             <div class="cert-name text-2xl leading-tight">{{ trust.name }}</div>            
             <div class="cert-eth text-3xl text-white font-bold ">{{ $filters.toEther(props.trust.etherAmount) }}</div>
             <div class="cert-date text-xl">Available: {{ $filters.toDate(props.trust.maturityDate) }}</div>              
             <div class="cert-creator text-xs">{{ $filters.shortenAddress(props.trust.creator) }}3</div>            
-            <div class="cert-trustee text-xs">{{ $filters.shortenAddress(props.trust.key) }} </div>            
+            <div class="cert-trustee text-xs">{{ $filters.shortenAddress(props.trust.trustee ) }} </div>            
         </div>
     </div>
 </template>
@@ -20,6 +20,7 @@ import { ChevronRightIcon } from '@heroicons/vue/outline'
 
 const props = defineProps({
     trust: Object,
+    selectable: Boolean,
 });
 
 const emit = defineEmit(['onclick']);
@@ -34,7 +35,9 @@ const emit = defineEmit(['onclick']);
         items-center 
         text-center
         bg-white 
-        border
+    }
+    .card-selectable {
+        @apply border
         rounded-md
         border-gray-300
         bg-gray-100
@@ -42,7 +45,7 @@ const emit = defineEmit(['onclick']);
         hover:border-black
         focus-within:ring-2 
         focus-within:ring-offset-4 
-        focus-within:ring-green-800 
+        focus-within:ring-green-800;
     }
      .card-inner {
         @apply relative 

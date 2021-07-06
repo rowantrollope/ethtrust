@@ -18,10 +18,10 @@
         @apply text-white bg-black hover:bg-gray-500;
     }
     .btn-primary {
-        @apply text-white bg-indigo-600 hover:bg-indigo-400 focus:ring-blue-500 ;
+        @apply text-white bg-blue-500 hover:bg-blue-400 focus:ring-blue-400 ;
     }
     .btn-primary-outline {
-        @apply text-indigo-600 border border-indigo-500 hover:bg-indigo-400 focus:ring-indigo-500 hover:text-white;
+        @apply text-blue-500 border border-blue-500 hover:bg-blue-400 focus:ring-blue-500 hover:text-white;
     }
     .btn-white {
         @apply text-black border border-gray-300 hover:bg-gray-100 focus:ring-gray-400 ;

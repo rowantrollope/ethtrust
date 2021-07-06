@@ -20,7 +20,7 @@
                         <div class="dialog-title">
                             <slot name="title"></slot>
                         </div>
-                        <div class="hidden sm:block absolute top-0 right-0 pt-4 pr-4">
+                        <div class="block absolute top-0 right-0 pt-4 pr-4">
                             <button type="button" class="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" @click="onCancel">
                                 <span class="sr-only">Close</span>
                                 <XIcon class="h-6 w-6" aria-hidden="true" />
@@ -129,6 +129,7 @@ const ethAmount = computed(() => toEther(trust.etherAmount));
 // Methods
 const onCreate = () => { 
     props.trust.maturityDate = new Date(maturityDate.value) / 1000; 
+    console.log("DATE ONUPDATED", maturityDate.value, props.trust.maturityDate);
     open.value = false; 
     emit('create'); 
 };
@@ -136,6 +137,7 @@ const onCreate = () => {
 const onCancel = () => { open.value = false; emit('cancel'); };
 
 const updated = onUpdated(() => { 
+    console.log("onUpdated ", maturityDate.value, props.trust.maturityDate)
     maturityDate.value = toDate(props.trust.maturityDate); 
 });
 

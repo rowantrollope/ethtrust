@@ -46,16 +46,13 @@ import { toWei,  } from '../services/helpers'
 import bc from '../services/Blockchain';
 import ts from '../services/TrustContract';
 
+const trusts = computed(() => { return ts.state.trusts.filter(trust => trust.creator.toLowerCase() === bc.state.mainAccount.toLowerCase()) } );
+
 const toast = ref({
     title: '',
     message: '',
     open: false,
 });
-
-defineEmit(['create-clicked']);
-
-const trusts = computed(() => { return ts.state.trusts.filter(trust => trust.creator.toLowerCase() === bc.state.mainAccount.toLowerCase()) } );
-
 const showToast = (title, message, timeout=3000) =>
 {
     toast.value.title = title;

@@ -50,8 +50,12 @@ export default class currencyExchange {
     }
 
     eth2usdFormatted(eth) {
-        if(!this.formatter)
+        if(!this.formatter || !this.exchange)
+        {
+            console.error("Exchange Not Ready", this.formatter, this.exchange)
             return;
+
+        }
 
         return this.formatter.format(this.eth2usd(eth));
     }
