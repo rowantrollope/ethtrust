@@ -2,7 +2,7 @@
     Card display for a single trust, shown by the ForYou list.
 --> 
 <template>
-    <div :class="selectable ? card-selectable : ''" class="card justify-center cursor-pointer">
+    <div :class="selectable ? cardSelectable : ''" class="card justify-center cursor-pointer" @click="emit('click')">
         <div class="card-inner">
             <img alt="cert" width="400" src="../assets/money.png">
             <div class="cert-name text-2xl leading-tight">{{ trust.name }}</div>            
@@ -18,12 +18,14 @@
 import { defineEmit, defineProps } from 'vue'
 import { ChevronRightIcon } from '@heroicons/vue/outline'
 
+const cardSelectable = "card-selectable";
+
 const props = defineProps({
     trust: Object,
     selectable: Boolean,
 });
 
-const emit = defineEmit(['onclick']);
+const emit = defineEmit(['click']);
 
 </script>
 

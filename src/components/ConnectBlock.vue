@@ -19,9 +19,9 @@
 </template>
 
 <script setup>
-import Button from '../components/Button';
-import bc from '../services/Blockchain';
-import ts from '../services/TrustContract';
+import Button from '@/components/Button';
+import bc from '@/services/Blockchain';
+import ts from '@/services/TrustContract';
 
 const onConnect = async () => {
     console.log("onConnect");

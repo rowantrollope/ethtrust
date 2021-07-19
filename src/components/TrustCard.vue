@@ -56,9 +56,8 @@
 import { defineProps, inject, computed } from 'vue'
 import { ChevronRightIcon } from '@heroicons/vue/outline'
 
-import CurrencyExchange from '../services/currencyExchange';
-
-import { toEther } from '../services/helpers';
+import CurrencyExchange from '@/services/CurrencyExchange';
+import { toEther } from '@/services/Helpers';
 
 const exchange = inject('exchange');
 
@@ -132,15 +131,15 @@ const eth2usd = computed(() => exchange.eth2usdFormatted(toEther(props.trust.eth
         @apply text-xl mb-2 font-light text-black;
     }
     .card-body {
-        @apply text-black text-sm flex-1 min-w-0 mt-2 mb-2;
+        @apply text-black text-sm sm:text-base flex-1 min-w-0 mt-2 mb-2;
     }
     .highlight-enter-from {
-        @apply bg-yellow-300;
-        transition: all 3s;
+        @apply bg-blue-300 rounded-md;
+        transition: all 5s;
     }
     .highlight-enter-to {
         @apply bg-white;
-        transition: all 3s;
+        transition: all 5s;
     }
     .pop-enter-from {
         @apply text-yellow-300;

@@ -40,7 +40,4 @@
 </template>
 
 <script setup>
-import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue'
-import { MenuIcon, XIcon } from '@heroicons/vue/outline'
-
 </script>

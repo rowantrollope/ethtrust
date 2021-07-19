@@ -2,7 +2,7 @@
     Create Wizard - Fund the trust
 --> 
 <template>
-    <div class="bg-white border-2 overflow-y-auto rounded-b-lg">
+    <div class="absolute overflow-y-auto">
         <div class="px-4 py-5 sm:px-6 flex items-center space-x-5">
             <h3 class="text-2xl font-medium leading-6 text-gray-900">
                 <slot></slot>
@@ -34,9 +34,9 @@
 <script setup="props, {emit}">
 import { ref, defineProps, onUpdated } from 'vue';
 
-import EthInput from './EthInput';
-import { toWei } from '../services/helpers'
-import bc from '../services/Blockchain';
+import EthInput from '@/components/EthInput';
+import { toWei } from '@/services/Helpers'
+import bc from '@/services/Blockchain';
 
 const etherAmount = ref('1');
 

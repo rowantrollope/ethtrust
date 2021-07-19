@@ -3,8 +3,8 @@
 -->
 <template>
     <div v-if="!trusts.length">
-        <h1 class="text-3xl mt-10 ml-5 tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-            <span class="block inline">Lets make your first Trust </span>
+        <h1 class="text-3xl mt-10 ml-5 tracking-tight font-thin text-gray-900 sm:text-5xl md:text-6xl">
+            <span class="block inline">Let's make your first Trust fund </span>
             <div class="flex items-center space-x-5 mt-10 ml-10 ">
                 <span class="block text-3xl sm:text-3xl md:text-5xl text-indigo-600">Click </span>
                 <Button class="btn-rounded text-3xl sm:text-3xl md:text-5xl btn-primary" @click="$emit('create-clicked')">Create New</Button>
@@ -38,13 +38,13 @@
 <script setup="props, {emit}">
 import { ref, defineProps, computed, watch, onMounted, defineEmit } from 'vue'
 
-import Button from './Button';
-import EditTrust from './EditTrust';
-import TrustCard from './TrustCard';
-import ToastNotification from './Toast';
-import { toWei,  } from '../services/helpers'
-import bc from '../services/Blockchain';
-import ts from '../services/TrustContract';
+import Button from '@/components/Button';
+import EditTrust from '@/components/EditTrust';
+import TrustCard from '@/components/TrustCard';
+import ToastNotification from '@/components/Toast';
+import { toWei,  } from '@/services/Helpers'
+import bc from '@/services/Blockchain';
+import ts from '@/services/TrustContract';
 
 const trusts = computed(() => { return ts.state.trusts.filter(trust => trust.creator.toLowerCase() === bc.state.mainAccount.toLowerCase()) } );
 

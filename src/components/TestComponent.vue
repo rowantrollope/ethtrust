@@ -6,7 +6,7 @@
         <div class="text-4xl font-black leading-tight">
         Hello World
         </div>
-        <Button class="btn btn-primary" :click="move">Move!</Button>
+        <Button class="btn-primary" :click="move">Move!</Button>
         <div class="mt-5 gap-5 grid grid-cols-2 grid-rows-2 text-2xl text-black">
             <div :class="cls1" class="slide" >a</div>
         </div>
@@ -14,8 +14,9 @@
 </template>
 
 <script setup="props, {emit}">
-import Button from '../components/Button'
 import { ref } from 'vue';
+
+import Button from '@/components/Button'
 
 const cls = ref('');
 const move = () => {

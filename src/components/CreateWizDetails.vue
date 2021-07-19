@@ -2,13 +2,13 @@
     Create Wizard Maturity Date
 --> 
 <template>
-    <div class=" bg-white border-2 overflow-y-auto rounded-b-lg">
+    <div class="absolute overflow-y-auto">
         <div class="px-4 mt-4 sm:px-6 flex items-center space-x-5 ">
             <h3 class="text-2xl font-medium leading-6 text-gray-900">
                 <slot></slot>
             </h3>
         </div>
-        <div class="text-lg px-4 py-5">
+        <div class="text-lg px-4 py-2">
             <dl class="sm:divide-y sm:divide-gray-200">
 
                 <div class="row">
@@ -38,10 +38,6 @@
                                 class="input-field" />       
                     </dd>
                 </div>
-                <div class="input-description"> 
-                    (Optional). For more advanced rules, enter the address of a trust rules SmartContract.
-                    Find more information about this on the FAQ.  Not supported at this time.  
-                </div>
             </dl>
         </div>
     </div>
@@ -50,8 +46,9 @@
 <script setup="props, {emit}">
 import { ref, defineProps, onUpdated, onMounted } from 'vue';
 import { Calendar, DatePicker } from 'v-calendar';
-import { toDate } from '../services/helpers'
-import Button from './Button';
+
+import Button from '@/components/Button';
+import { toDate } from '@/services/Helpers'
 
 const props = defineProps({
     trust: Object,

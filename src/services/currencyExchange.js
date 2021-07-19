@@ -6,7 +6,7 @@
 
 */
 import { ref } from 'vue';
-import { round, toEther } from './helpers';
+import { round, toEther } from '@/services/Helpers';
 
 export default class currencyExchange {
 

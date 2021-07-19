@@ -16,23 +16,31 @@
         <Progress :panels="panels" :currentPanel="currentPanel"></Progress>
 
         <!-- DIALOGS --> 
-        <div class="slider -mt-1">
+        <div class="slider">
             <transition :name="panelClass">
-                <CreateWizBeneficiary class="window" :trust="trust" v-show="currentPanel === 0"/> 
+                <CreateWizBeneficiary class="window" :trust="trust" v-show="currentPanel === 0">
+                    Who is this for?
+                </CreateWizBeneficiary> 
             </transition>
             <transition :name="panelClass">
-                <CreateWizDetails class="window" :trust="trust" v-show="currentPanel === 1"/> 
+                <CreateWizDetails class="window" :trust="trust" v-show="currentPanel === 1">
+                    When should they get it?
+                </CreateWizDetails> 
             </transition>
             <transition :name="panelClass">
-                <CreateWizFund class="window"  :trust="trust" v-show="currentPanel === 2"/> 
+                <CreateWizFund class="window"  :trust="trust" v-show="currentPanel === 2">
+                    How much should they get?
+                </CreateWizFund> 
             </transition>
             <transition :name="panelClass">
-                <CreateWizConfirm class="window"  :trust="trust" v-show="currentPanel === 3"/> 
+                <CreateWizConfirm class="window"  :trust="trust" v-show="currentPanel === 3">
+                    Confirm the details
+                </CreateWizConfirm> 
             </transition>
         </div>
 
         <!-- FOOTER --> 
-        <div class="mt-5 flex bg-white space-x-5">
+        <div class="mt-1 flex bg-white space-x-5">
             <Button class="flex-1 btn btn-danger-outline" :onClick="onClose">
                 Cancel
             </Button>
@@ -52,17 +60,18 @@
 <script setup="props, {emit}">
 import { ref, computed, defineEmit, defineProps, watch, onBeforeMount } from 'vue';
 
-import Modal from './Modal';
-import Button from './Button';
-import CreateWizBeneficiary from './CreateWizBeneficiary';
-import CreateWizDetails from './CreateWizDetails';
-import CreateWizFund from './CreateWizFund';
-import CreateWizConfirm from './CreateWizConfirm';
-import Progress from './Progress';
+import Modal from '@/components/Modal';
+import Button from '@/components/Button';
+import CreateWizBeneficiary from '@/components/CreateWizBeneficiary';
+import CreateWizDetails from '@/components/CreateWizDetails';
+import CreateWizFund from '@/components/CreateWizFund';
+import CreateWizConfirm from '@/components/CreateWizConfirm';
+import Progress from '@/components/Progress';
 
-import { toWei } from '../services/helpers.js';
-import bc from '../services/Blockchain';
-import ts from '../services/TrustContract';
+import { toWei } from '@/services/Helpers.js';
+import bc from '@/services/Blockchain';
+import ts from '@/services/TrustContract';
+
 const panels = ref(["Beneficiary", "Maturity Date", "Funding", "Confirmation"]);
 
 const trust = ref({});

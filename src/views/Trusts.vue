@@ -10,12 +10,12 @@
         <PageTitle >
             <template v-slot:title>Create & Manage Trusts</template>
             <template v-slot:buttons>           
-                <Button class="btn-rounded btn-primary" :onClick="onCreateNew">
+                <Button class="btn-rounded btn-primary text-sm" :onClick="onCreateNew">
                     Create New
                 </Button>            
             </template>
         </PageTitle>
-        <div class="px-5">
+        <div class="px-5 mt-5">
             <TrustList @create-clicked="onCreateNew"></TrustList>
         </div>
     </div>

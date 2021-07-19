@@ -7,7 +7,8 @@
 import Web3 from 'web3';
 import { reactive, watch } from 'vue';
 import Trusts from "../../build/contracts/Trusts.json";
-import bc from "./Blockchain";
+
+import bc from "@/services/Blockchain";
 
 let trustContract = {};
 
@@ -78,14 +79,13 @@ const onCreateTrust = async (error, event) => {
     const idx = state.trusts.findIndex(trust => trust.key === key);
     
     // Sometimes this callback is being called twice - only insert once
-    if(idx != -1)
+    if(idx === -1)
     {
+        let trust = await trustContract.methods.getTrust(event.returnValues.key).call();
+        state.trusts.push(trust);
+    } else {
         console.error("LogCreateTrust Called Twice", event);
-        return;
     }
-
-    let trust = await trustContract.methods.getTrust(event.returnValues.key).call();
-    state.trusts.push(trust);
 }
 
 const load = async (callback) => {

@@ -2,13 +2,13 @@
     Create Wizard Confirmation
 --> 
 <template>
-    <div class=" bg-white border-2 overflow-y-auto rounded-b-lg">
-        <div class="px-4 sm:px-6 flex items-center space-x-5 ">
+    <div class="absolute overflow-y-auto">
+        <div class="mt-4 px-4 sm:px-6 flex items-center space-x-5 ">
             <h3 class="text-2xl font-medium leading-6 text-gray-900">
                 <slot></slot>
             </h3>
         </div>
-        <div class=" text-sm px-6 py-6">
+        <div class="text-sm px-6 py-6">
             <TrustCardEx :trust="trust"></TrustCardEx>
             Beneficiary: <b>{{ trust.beneficiary }} </b><br/>
             Trustee: <b>{{ trust.trustee }} </b><br/>
@@ -25,9 +25,9 @@
 
 <script setup="props, {emit}">
 import { ref, defineProps } from 'vue';
-import Button from './Button';
-import TrustCardEx from './TrustCardEx';
-import { toEther } from '../services/helpers';
+import Button from '@/components/Button';
+import TrustCardEx from '@/components/TrustCardEx';
+import { toEther } from '@/services/Helpers';
 
 const props = defineProps({
     trust: Object,

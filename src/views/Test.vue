@@ -13,12 +13,6 @@
             <template v-slot:message>{{toast.message}}</template>
         </ToastNotification>
         <div class="flex space-x-2">
-            <Button @click="back" class="btn-primary">
-                back
-            </Button>
-            <Button @click="next" class="btn-primary">
-                next
-            </Button>
             <Button @click="showNotification" class="btn-primary">
                 Test Notification
             </Button>
@@ -30,24 +24,10 @@
             <template v-slot:title>Create a new trust</template>
             <CreateWizBeneficiary class="window mr-5 max-w-2xl" :trust="trust" />
             <div class="mt-2 flex justify-end space-x-2">
-                <Button class="btn btn-primary" @click="openDlg = !openDlg">Cancel</Button>
-                <Button class="btn btn-primary" @click="openDlg = !openDlg">OK</Button>
+                <Button class="btn-primary" @click="openDlg = !openDlg">Cancel</Button>
+                <Button class="btn-primary" @click="openDlg = !openDlg">OK</Button>
             </div>
         </Modal>
-        <div class="mt-10">
-        <transition :name="panelClass">
-            <CreateWizBeneficiary class="window mr-5 max-w-2xl" :trust="trust" v-show="currentPanel === 0"/> 
-        </transition>
-        <transition :name="panelClass">
-            <CreateWizDetails class="window mr-5 max-w-2xl" :trust="trust" v-show="currentPanel === 1"/> 
-        </transition>
-        <transition :name="panelClass">
-            <CreateWizFund class="window mr-5 max-w-2xl"  :trust="trust" v-show="currentPanel === 2"/> 
-        </transition>
-        <transition :name="panelClass">
-            <CreateWizConfirm class="window mr-5 max-w-2xl"  :trust="trust" v-show="currentPanel === 3"/> 
-        </transition>
-        </div>          
         <div v-if="false">
             <div v-if="showBCInfo" class="flex flex-col text-xl space-y-2 mt-5 border-2 p-3">
                 <div class="text-3xl">Blockchain info</div>
@@ -71,7 +51,7 @@
 
             12 word pass-phrase
             <input type="text" v-model="mnemonicInput" name="mnemonicInput" id="mnemonicInput" autocomplete="mnemonicInput" />
-            <Button class="btn btn-primary" @click="onSearch">Find my trust</Button>
+            <Button class="btn-primary" @click="onSearch">Find my trust</Button>
             Found Your Account: {{ foundAddress }} 
 
             <div v-if="bc.state.isConnected && ts.state.isConnected" class="grid mt-20 grid-cols-1 lg:grid-cols-2 gap-4">
@@ -87,22 +67,22 @@ import { ethers, Wallet } from "ethers";
 
 import { ref, inject, computed, onBeforeMount } from 'vue';
 
-import CreateWizBeneficiary from '../components/CreateWizBeneficiary';
-import CreateWizDetails from '../components/CreateWizDetails';
-import CreateWizFund from '../components/CreateWizFund';
-import CreateWizConfirm from '../components/CreateWizConfirm';
+import CreateWizBeneficiary from '@/components/CreateWizBeneficiary';
+import CreateWizDetails from '@/components/CreateWizDetails';
+import CreateWizFund from '@/components/CreateWizFund';
+import CreateWizConfirm from '@/components/CreateWizConfirm';
 
-import EthInput from '../components/EthInput';
-import Modal from '../components/Modal';
-import Button from '../components/Button';
-import TrustCard from '../components/TrustCard';
-import TrustCardEx from '../components/TrustCardEx';
-import ToastNotification from '../components/Toast';
-import TestComponent from '../components/TestComponent';
-import CreateWiz from '../components/CreateWiz';
-import bc from '../services/Blockchain';
-import ts from '../services/TrustContract';
-import { toWei } from '../services/helpers';
+import EthInput from '@/components/EthInput';
+import Modal from '@/components/Modal';
+import Button from '@/components/Button';
+import TrustCard from '@/components/TrustCard';
+import TrustCardEx from '@/components/TrustCardEx';
+import ToastNotification from '@/components/Toast';
+import TestComponent from '@/components/TestComponent';
+import CreateWiz from '@/components/CreateWiz';
+import bc from '@/services/Blockchain';
+import ts from '@/services/TrustContract';
+import { toWei } from '@/services/Helpers';
 
 const trust = ref({});
 const openDlg = ref(false);

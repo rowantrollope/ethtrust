@@ -106,10 +106,10 @@ import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } f
 import { XIcon, ExclamationIcon } from '@heroicons/vue/outline'
 import { Calendar, DatePicker } from 'v-calendar';
 
-import Button from './Button.vue';
-import EthInput from './EthInput.vue';
-import { toEther, toDate } from '../services/helpers'
-import bc from '../services/Blockchain';
+import Button from '@/components/Button.vue';
+import EthInput from '@/components/EthInput.vue';
+import { toEther, toDate } from '@/services/Helpers'
+import bc from '@/services/Blockchain';
 
 const props = defineProps({
     trust: Object,

@@ -87,7 +87,7 @@ contract Trusts {
 
         t.etherAmount += msg.value;
 
-        //emit LogDepositTrust(msg.sender, key, msg.value);
+        emit LogDepositTrust(msg.sender, key, msg.value);
     }
     
     function deleteTrust(bytes32 key) public {
@@ -158,7 +158,7 @@ contract Trusts {
                 , "Only Creator and Owner can withdraw");
         
         if(msg.sender != t.creator)
-            require(t.maturityDate >= now, "Cannot withdraw until Maturity date");
+            require(t.maturityDate <= block.timestamp, "Cannot withdraw until Maturity date");
  
         //TODO: Check that date allows
         require(_etherAmount <= t.etherAmount, "Can't withdraw more ether than exists in trust");

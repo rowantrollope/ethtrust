@@ -5,16 +5,10 @@
 -->
 <template>             
     <!-- Global notification live region, render this permanently at the end of the document -->
-    <div aria-live="assertive" class="z-50 fixed inset-0 flex items-end px-4 py-6 pointer-events-none sm:p-6 sm:items-start">
+    <div class="z-50 fixed inset-0 flex items-end px-4 py-6 pointer-events-none sm:p-6 sm:items-start" aria-live="assertive" >
         <div class="w-full flex flex-col items-center space-y-4 sm:items-end">
             <!-- Notification panel, dynamically insert this into the live region when it needs to be displayed -->
-            <transition
-                enter-active-class="transition transform ease-out duration-500" 
-                enter-from-class="translate-y-4 opacity-0" 
-                enter-to-class="translate-y-0 opacity-100" 
-                leave-active-class="transition transform ease-in duration-300" 
-                leave-from-class="opacity-100" 
-                leave-to-class="opacity-0">
+            <transition name="slideup">
                 <div v-if="open" class="max-w-sm w-full bg-white shadow-lg border rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
                     <div class="p-4">
                         <div class="flex items-start">
@@ -55,4 +49,23 @@ const props = defineProps({
 </script>
 
 <style scoped>
+    .slideup-enter-active {
+        @apply transition transform ease-out duration-500;
+    }
+    .slideup-enter-from {
+        @apply translate-y-4 opacity-0;
+    }
+    .slideup-enter-to {
+        @apply translate-y-0 opacity-100;
+    }
+    .slideup-leave-active {
+        @apply transition transform ease-in duration-300;
+    }
+    .slideup-leave-from {
+        @apply opacity-100;
+    }
+    .slideup-leave-to {
+        @apply opacity-0;
+    }
+
 </style>

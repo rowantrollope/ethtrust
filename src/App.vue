@@ -6,12 +6,13 @@
 <script setup>
     import { provide } from 'vue';
 
-    import Nav from './components/Nav.vue'; 
-    import ts from './services/TrustContract';
-    import bc from './services/Blockchain';
-    import currencyExchange from './services/currencyExchange';
+    import Nav from '@/components/Nav'; 
+    
+    import ts from '@/services/TrustContract';
+    import bc from '@/services/Blockchain';
+    import CurrencyExchange from '@/services/CurrencyExchange';
 
-    const exchange = new currencyExchange;
+    const exchange = new CurrencyExchange;
 
     const init = async () => { 
         // PRIOR WAY to Connect to BC: store.state.ts.init();

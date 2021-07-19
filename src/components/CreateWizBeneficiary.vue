@@ -2,8 +2,8 @@
     Create Wizard - Beneficiary
 --> 
 <template>
-    <div class="bg-white border-2 overflow-y-auto rounded-b-lg">
-        <div class="px-4 py-5 sm:px-6 flex items-center space-x-5 ">
+    <div class="absolute overflow-y-auto">
+        <div class="px-4 py-4 sm:px-6 flex items-center space-x-5 ">
             <h3 class="text-2xl font-medium leading-6 text-gray-900">
                 <slot></slot>
             </h3>
@@ -95,6 +95,6 @@ const props = defineProps({
     @apply text-gray-400 sm:mt-0 sm:col-span-2;
 }
 .row {
-    @apply sm:py-5 sm:grid sm:grid-cols-3 sm:gap-1 sm:px-6;
+    @apply sm:py-3 sm:grid sm:grid-cols-3 sm:gap-1 sm:px-6;
 }
 </style>

@@ -48,7 +48,7 @@ const emit = defineEmit('cancel');
 
 <style scoped>
     .screen-overlay {
-        @apply fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity;
+        @apply fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-filter backdrop-blur-sm;
     }    
     .dialog-window {
         @apply inline-block align-bottom bg-white rounded-2xl px-4 pt-5 pb-4 sm:max-w-3xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:w-full sm:p-6;

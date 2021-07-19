@@ -61,6 +61,7 @@ const accountsChanged = (accounts) => {
         state.mainAccount = accounts[0];
         // Do any other work!
     }            
+    refreshBalance();
 }
 
 const etherBalance = computed(() => { return state.isConnected ? window.web3.utils.fromWei(state.balance, 'Ether') : 0; });

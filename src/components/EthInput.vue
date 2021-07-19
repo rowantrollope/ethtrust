@@ -26,8 +26,8 @@
 <script setup="props, {emit}">
 import { ref, computed, inject, onBeforeMount } from 'vue';
 
-import currencyExchange from '../services/currencyExchange';
-import { round } from '../services/helpers';
+import CurrencyExchange from '@/services/CurrencyExchange';
+import { round } from '@/services/Helpers';
 
 const exchange = inject('exchange');
 
@@ -37,8 +37,10 @@ const eth2usd = computed(() => exchange.eth2usdFormatted(props.modelValue));
 const props = defineProps({
     modelValue: Number,
 });
+
 const beforeMount = onBeforeMount(() => {
 })
+
 </script>
 
 <style scoped>
